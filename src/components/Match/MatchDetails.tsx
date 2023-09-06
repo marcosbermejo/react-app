@@ -7,7 +7,7 @@ export default function Details({ date }: { date: Date }) {
     <Stack>
       <Stack borderBottom={1} justifyContent={'flex-end'} pb={3} mb={3} sx={{ position: 'relative' }}>
         <Typography textAlign={'center'} fontSize={12}>Proper partit:</Typography>
-        <Typography textAlign={'center'} fontSize={12}>{formatDate(date, true)}</Typography>
+        <Typography textAlign={'center'} fontSize={12} fontWeight={'bold'}>{formatDate(date, true)}</Typography>
         <Versus />
       </Stack>
 

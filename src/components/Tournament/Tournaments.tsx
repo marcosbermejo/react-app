@@ -1,14 +1,12 @@
 import { Typography, Card, CardContent, Stack, Box } from "@mui/material";
-import Tournament from "../interfaces/Tournament";
-import formatDate from "../util/formatDate";
-import Match from "./Match/Match";
+import Tournament from "../../interfaces/Tournament";
+import formatDate from "../../util/formatDate";
+import Match from "../Match/Match";
 
 export default function Tournaments({ tournaments }: { tournaments: Tournament[] }) {
 
   const getTitle = (name: string) => name.split('-')?.[0] ?? ''
   const getLeague = (name: string) => name.split('-')?.[1] ?? ''
-
-
   const toTitleCase = (title: string) => title.replace(
     /\w\S*/g,
     (txt) => txt.charAt(0).toUpperCase() + txt.substring(1).toLowerCase()
@@ -40,10 +38,7 @@ export default function Tournaments({ tournaments }: { tournaments: Tournament[]
                 {toTitleCase(getLeague(tournament.name))}
               </Typography>
 
-
-                {tournament.nextMatch && <Match match={tournament.nextMatch} />}
-
-
+              {tournament.nextMatch && <Match match={tournament.nextMatch} />}
 
             </CardContent>
           </Card>

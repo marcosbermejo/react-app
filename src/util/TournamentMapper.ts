@@ -6,6 +6,8 @@ import Tournament from '../interfaces/Tournament'
 import Match from '../interfaces/Match'
 import Team from '../interfaces/Team'
 
+let cont = 0
+
 export default class TournamentMapper {
 
   private readonly data: ApiResponseData[]
@@ -21,32 +23,40 @@ export default class TournamentMapper {
    */
   public mapTournaments(): Tournament[] {
     return this.data
-      .sort((a, b) => (a.attributes.order - b.attributes.order) || a.attributes.name.localeCompare(b.attributes.name))
-      .map(tournament => this.createTournament(tournament));
+      .map(tournament => this.createTournament(tournament))
+      .sort((a, b) => {
+        if (a.nextMatch === null && b.nextMatch === null) return 0
+        if (a.nextMatch?.date === null && b.nextMatch?.date === null) return 0
+        if (a.nextMatch === null) return 1
+        if (a.nextMatch?.date === null) return 1
+        if (b.nextMatch === null) return -1
+        if (b.nextMatch?.date === null) return -1
+        return a.nextMatch.date.getTime() - b.nextMatch.date.getTime();
+    });
   }
 
   /**
    * Maps from API object to Tournament
    */
   private createTournament({ id, attributes }: ApiResponseData): Tournament {
-
-    let nextMatch = {
-      id: '',
-      finished: false,
-      date: null,
-      homeTeam: null,
-      awayTeam: null
-    }
-
+    const now = new Date()
+    const matches: Match[] = []
     const tournament = {
       status: attributes.status,
       order: attributes.order,
       id: id,
       name: attributes.name,
-      groups: this.findGroups(id).map(group => this.createGroup(group, nextMatch))
-    } as Tournament
+      groups: this.findGroups(id).map(group => this.createGroup(group, matches))
+    } as Tournament;
 
-    tournament.nextMatch = nextMatch.date ? nextMatch : null
+    matches.sort((a, b) => {
+      if (a.date === null && b.date === null) return 0
+      if (a.date === null) return 1
+      if (b.date === null) return -1
+      return a.date.getTime() - b.date.getTime();
+    })
+
+    tournament.nextMatch = matches.find(match =>  match.date && match.date > now) ?? null
 
     return tournament;
   }
@@ -63,11 +73,11 @@ export default class TournamentMapper {
   /**
    * Maps from API object to Group
    */
-  private createGroup({ id, attributes }: ApiResponseData, nextMatch: Match): Group {
+  private createGroup({ id, attributes }: ApiResponseData, matches: Match[]): Group {
     return {
       id: id,
       name: attributes.name,
-      rounds: this.findRounds(id).map(round => this.createRound(round, nextMatch))
+      rounds: this.findRounds(id).map(round => this.createRound(round, matches))
     }
   }
 
@@ -83,13 +93,13 @@ export default class TournamentMapper {
   /**
    * Maps from API object to Ground
    */
-  private createRound({ id, attributes }: ApiResponseData, nextMatch: Match): Round {
+  private createRound({ id, attributes }: ApiResponseData, matches: Match[]): Round {
     return {
       id: id,
       name: attributes.name,
       start_date: this.parseDate(attributes.start_date),
       end_date: this.parseDate(attributes.end_date),
-      matches: this.findMatches(id).map(match => this.createMatch(match, nextMatch))
+      matches: this.findMatches(id).map(match => this.createMatch(match, matches))
     }
   }
 
@@ -105,7 +115,7 @@ export default class TournamentMapper {
   /**
    * Maps from API object to Match
    */
-  private createMatch({ id, attributes, meta }: ApiResponseData, nextMatch: Match): Match {
+  private createMatch({ id, attributes, meta }: ApiResponseData, matches: Match[]): Match {
     const match = {
       id: id,
       finished: attributes.finished,
@@ -114,17 +124,8 @@ export default class TournamentMapper {
       awayTeam: this.findTeam(meta.away_team),
     }
 
-    const now = new Date()
-
-    if (match.date) {
-      if ((!nextMatch.date) || (nextMatch.date && match.date > now && match.date < nextMatch.date)) {
-        nextMatch.date = match.date
-        nextMatch.homeTeam = match.homeTeam
-        nextMatch.awayTeam = match.awayTeam
-      }
-    }
-
-    return match
+    matches.push(match)
+    return match;
   }
 
   /**
