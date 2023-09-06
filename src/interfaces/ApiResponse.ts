@@ -18,6 +18,7 @@ export interface ApiResponseData {
   meta: {
     away_team: string,
     home_team: string,
+    avatar: { large: string }
   }
 }
 

@@ -1,63 +1,49 @@
 import React from 'react';
-import { format } from 'date-fns'
-import { useTournaments } from './data/Tournament'; // Asegúrate de ajustar la ruta
+import { useTournaments } from './hooks/useTournaments'; // Asegúrate de ajustar la ruta
 import Tournaments from './components/Tournaments';
-import { Container } from '@mui/material';
+import { AppBar, BottomNavigation, BottomNavigationAction, Box, Container, Paper, Typography } from '@mui/material';
 
-/**
- * Formats date to dd/MM/yyyy Adds HH:mm if hour = true
- */
-const formatDate = (date: Date | null, hour = false): string => {
-  if (!date) return ''
-  return format(date, `dd/MM/yyyy${hour ? ' HH:mm' : ''}`)
-}
-
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+import SportsVolleyballIcon from '@mui/icons-material/SportsVolleyball';
+import QueryStatsIcon from '@mui/icons-material/QueryStats';
 function App() {
   const { tournaments, error, isLoading } = useTournaments();
+
+  const [value, setValue] = React.useState(1);
+
 
   if (error) return <div>Error al cargar los datos</div>;
   if (isLoading) return <div>loading...</div>
 
+
   return (
     <Container maxWidth="md">
+      <Box>
+        <AppBar position="static">
+          <Typography variant="h6" sx={{ ml: 2, my: 2 }}>
+            Waterpolo Tournaments
+          </Typography>
+        </AppBar>
+      </Box>
+
       <Tournaments tournaments={tournaments} />
+
+      <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }} elevation={3}>
+        <BottomNavigation
+          showLabels
+          value={value}
+          onChange={(event, newValue) => {
+            setValue(newValue);
+          }}
+        >
+          <BottomNavigationAction label="Teams" icon={<SportsVolleyballIcon />} />
+          <BottomNavigationAction label="Tournaments" icon={<EmojiEventsIcon />} />
+          <BottomNavigationAction label="Stats" icon={<QueryStatsIcon />} />
+        </BottomNavigation>
+      </Paper>
+
     </Container>
-  )
-
-
-  return (
-    <div>
-      <h1>Waterpolo Tournaments</h1>
-      <ul>
-        {tournaments.map((tournament) => (
-          <li key={tournament.id}>
-            {tournament.name}
-            <ul>
-              {tournament.groups?.map((group) => (
-                <li key={group.id}>
-                  {group.name}
-                  <ul>
-                    {group.rounds?.map((round) => (
-                      <li key={round.id}>
-                        {round.name}, {formatDate(round.start_date)} {round.end_date !== round.start_date ?? round.end_date}
-                        <ul>
-                          {round.matches?.map((match) => (
-                            match.homeTeam && match.awayTeam &&
-                            <li key={match.id}>
-                              {match.homeTeam.name} VS {match.awayTeam.name}: {formatDate(match.date, true)}
-                            </li>
-                          ))}
-                        </ul>                        
-                      </li>
-                    ))}
-                  </ul>
-                </li>
-              ))}
-            </ul>
-          </li>
-        ))}
-      </ul>
-    </div>
   );
 
 }

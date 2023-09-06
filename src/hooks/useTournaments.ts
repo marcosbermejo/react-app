@@ -1,10 +1,10 @@
 import useSWRImmutable from 'swr';
-import fetcher from './Fetcher';
-import { ApiResponse } from './interfaces/ApiResponse';
-import Tournament from './interfaces/Tournament';
-import TournamentMapper from './TournamentMapper';
+import fetcher from '../util/Fetcher';
+import { ApiResponse } from '../interfaces/ApiResponse';
+import Tournament from '../interfaces/Tournament';
+import TournamentMapper from '../util/TournamentMapper';
 
-const URL = 'https://localhost:3000'
+const URL = 'http://localhost:3000'
 
 export function useTournaments() {
   const { data, error, isLoading } = useSWRImmutable<ApiResponse>(

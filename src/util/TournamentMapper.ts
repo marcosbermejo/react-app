@@ -1,10 +1,10 @@
 import { parse } from 'date-fns'
-import { ApiResponseData, ApiResponse } from './interfaces/ApiResponse'
-import Group from './interfaces/Group'
-import Round from './interfaces/Round'
-import Tournament from './interfaces/Tournament'
-import Match from './interfaces/Match'
-import Team from './interfaces/Team'
+import { ApiResponseData, ApiResponse } from '../interfaces/ApiResponse'
+import Group from '../interfaces/Group'
+import Round from '../interfaces/Round'
+import Tournament from '../interfaces/Tournament'
+import Match from '../interfaces/Match'
+import Team from '../interfaces/Team'
 
 export default class TournamentMapper {
 
@@ -138,10 +138,11 @@ export default class TournamentMapper {
   /**
    * Maps from API object to Match
    */
-  private createTeam({ id, attributes }: ApiResponseData): Team {
+  private createTeam({ id, attributes, meta }: ApiResponseData): Team {
     return {
       id: id,
-      name: attributes.name
+      name: attributes.name,
+      image: meta.avatar.large
     }
   }
 

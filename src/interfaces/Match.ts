@@ -1,6 +1,6 @@
 import Team from "./Team";
 
-export default interface Round {
+export default interface Match {
   id: string;
   finished: boolean;
   date: Date | null;
