@@ -22,7 +22,12 @@ export interface ApiResponseData {
   }
 }
 
-export interface ApiResponse {
+export interface ApiListResponse {
   data: ApiResponseData[];
+  included: ApiResponseData[];
+}
+
+export interface ApiItemResponse {
+  data: ApiResponseData;
   included: ApiResponseData[];
 }

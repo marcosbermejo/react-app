@@ -1,19 +1,17 @@
 import { parse } from 'date-fns'
-import { ApiResponseData, ApiResponse } from '../interfaces/ApiResponse'
+import { ApiResponseData, ApiListResponse } from '../interfaces/ApiResponse'
 import Group from '../interfaces/Group'
 import Round from '../interfaces/Round'
 import Tournament from '../interfaces/Tournament'
 import Match from '../interfaces/Match'
 import Team from '../interfaces/Team'
 
-let cont = 0
-
 export default class TournamentMapper {
 
   private readonly data: ApiResponseData[]
   private readonly included: ApiResponseData[]
 
-  constructor(response: ApiResponse) {
+  constructor(response: ApiListResponse) {
     this.data = response.data
     this.included = response.included
   }
@@ -23,40 +21,36 @@ export default class TournamentMapper {
    */
   public mapTournaments(): Tournament[] {
     return this.data
+      .sort((a, b) => a.attributes.order - b.attributes.order)
       .map(tournament => this.createTournament(tournament))
-      .sort((a, b) => {
-        if (a.nextMatch === null && b.nextMatch === null) return 0
-        if (a.nextMatch?.date === null && b.nextMatch?.date === null) return 0
-        if (a.nextMatch === null) return 1
-        if (a.nextMatch?.date === null) return 1
-        if (b.nextMatch === null) return -1
-        if (b.nextMatch?.date === null) return -1
-        return a.nextMatch.date.getTime() - b.nextMatch.date.getTime();
-    });
   }
 
   /**
    * Maps from API object to Tournament
    */
   private createTournament({ id, attributes }: ApiResponseData): Tournament {
-    const now = new Date()
-    const matches: Match[] = []
     const tournament = {
       status: attributes.status,
       order: attributes.order,
       id: id,
       name: attributes.name,
-      groups: this.findGroups(id).map(group => this.createGroup(group, matches))
+      nextMatches: []
     } as Tournament;
 
+    if (this.included.length === 0) return tournament;
+
+    const now = new Date()
+    const matches: Match[] = []
+    tournament.groups = this.findGroups(id).map(group => this.createGroup(group, matches))
+
     matches.sort((a, b) => {
-      if (a.date === null && b.date === null) return 0
-      if (a.date === null) return 1
-      if (b.date === null) return -1
+      if (!a.date && !b.date) return 0
+      if (!a.date) return 1
+      if (!b.date) return -1
       return a.date.getTime() - b.date.getTime();
     })
 
-    tournament.nextMatch = matches.find(match =>  match.date && match.date > now) ?? null
+    tournament.nextMatches = matches.filter(match =>  match.date && match.date > now) ?? undefined
 
     return tournament;
   }
@@ -131,9 +125,9 @@ export default class TournamentMapper {
   /**
    * Finds a team by id in `included` attribute and returns a mapped Team object
    */
-  private findTeam(teamId: string): Team | null {
+  private findTeam(teamId: string): Team | undefined {
     const data = this.included.find(entity => entity.type === 'team' && entity.id === teamId)
-    return data ? this.createTeam(data) : null
+    return data ? this.createTeam(data) : undefined
   }
 
   /**
@@ -150,8 +144,8 @@ export default class TournamentMapper {
   /**
    * Parses API Dates by manually set UTC (Z) in date
    */
-  private parseDate(date: string): Date | null {
-    if (!date) return null
+  private parseDate(date: string): Date | undefined {
+    if (!date) return undefined
     return parse(`${date} Z`, 'yyyy-MM-dd HH:mm:ss X', new Date());
   };
 
