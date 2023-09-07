@@ -1,10 +1,22 @@
-import { Typography, Card, CardContent, Stack, Box } from "@mui/material";
+import React, { useContext, useEffect } from 'react';
+
+import { Typography, Card, CardContent, Stack, Box, Alert } from "@mui/material";
 import Tournament from "../../interfaces/Tournament";
 import formatDate from "../../util/formatDate";
 import Match from "../Match/Match";
+import Loading from "../../layout/Loading";
+import { TournamentsContext } from '../../providers/TournamentsProvider';
 
-export default function Tournaments({ tournaments }: { tournaments: Tournament[] }) {
+export default function Tournaments() {
 
+  const { load, tournaments, error } = useContext(TournamentsContext)
+
+  useEffect(() => load(), [])
+
+  if (error) return <Alert severity="error">{error}</Alert>
+
+  if (!tournaments) return <Loading />
+  
   const getTitle = (name: string) => name.split('-')?.[0] ?? ''
   const getLeague = (name: string) => name.split('-')?.[1] ?? ''
   const toTitleCase = (title: string) => title.replace(
@@ -27,7 +39,7 @@ export default function Tournaments({ tournaments }: { tournaments: Tournament[]
         .filter(tournament => tournament.groups?.[0]?.rounds?.length > 0)
         .map((tournament) => (
           <Card variant="outlined" key={tournament.id}>
-            <CardContent>
+            <CardContent> 
               <Typography color="text.secondary" fontSize="12px" textAlign="center">
                 {getDates(tournament)}
               </Typography>
