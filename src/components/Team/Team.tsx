@@ -4,7 +4,7 @@ import ITeam from "../../interfaces/Team";
 export default function Team({ team }: { team: ITeam }) {
   return (
     <Stack alignItems="center">
-      <Paper elevation={3} sx={{ mb: 1 }}>
+      <Paper elevation={3} sx={{ mb: 1, minHeight: 80 }}>
         <img
           src={team.image}
           alt={team.name}

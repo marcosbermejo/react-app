@@ -9,16 +9,21 @@ export default function Match({ match }: { match: IMatch }) {
 
   if (!date || !homeTeam || !awayTeam) return <></>
 
+  const dayFormat = match.date ? `EEEE, d ${[3, 7, 9].includes(match.date.getMonth()) ? `'d\'\''` : `'de '`}MMMM` : ''
+
   return (
-    <Grid container>
+    <Grid container my={3}>
       <Grid item xs={3}>
         <Team team={homeTeam} />
       </Grid>
       <Grid item xs={6} px={1}>
-        <Stack height={'100%'} textAlign={'center'} fontSize={12}>
-          <Typography>{ match.date && format(match.date, 'dd MMMM', {locale: ca}) }</Typography>
-          <Typography>{ match.date && format(match.date, 'HH:mm') }</Typography>
-          <Typography mt={1}>{ awayTeam.name }</Typography>
+        <Stack height={'100%'} textAlign={'center'} fontSize={12} justifyContent={'center'} pb={1}>
+          <Typography sx={{ '&::first-letter': { textTransform: 'uppercase'}}}>
+            { match.date && format(match.date, dayFormat, {locale: ca}) }
+          </Typography>
+          <Typography fontSize={22} fontWeight={700}>
+            { match.date && format(match.date, 'HH:mm') }
+          </Typography>
         </Stack>
       </Grid>
       <Grid item xs={3}>

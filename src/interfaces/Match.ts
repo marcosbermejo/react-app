@@ -6,4 +6,5 @@ export default interface Match {
   date?: Date;
   homeTeam?: Team;
   awayTeam?: Team;
+  facility: string;
 }

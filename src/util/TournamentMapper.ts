@@ -28,20 +28,19 @@ export default class TournamentMapper {
   /**
    * Maps from API object to Tournament
    */
-  private createTournament({ id, attributes }: ApiResponseData): Tournament {
+  private createTournament({ id, attributes, relationships }: ApiResponseData): Tournament {
+    const now = new Date()
+    const matches: Match[] = []
+
     const tournament = {
       status: attributes.status,
       order: attributes.order,
       id: id,
       name: attributes.name,
+      category: this.findCategory(relationships?.category?.data?.id),
+      groups: this.findGroups(id).map(group => this.createGroup(group, matches)),
       nextMatches: []
     } as Tournament;
-
-    if (this.included.length === 0) return tournament;
-
-    const now = new Date()
-    const matches: Match[] = []
-    tournament.groups = this.findGroups(id).map(group => this.createGroup(group, matches))
 
     matches.sort((a, b) => {
       if (!a.date && !b.date) return 0
@@ -50,13 +49,21 @@ export default class TournamentMapper {
       return a.date.getTime() - b.date.getTime();
     })
 
-    tournament.nextMatches = matches.filter(match =>  match.date && match.date > now) ?? undefined
+    tournament.nextMatches = matches.filter(match =>  match.date && match.date > now)
 
     return tournament;
   }
 
   /**
-   * Finds groups for a given tournamentId in `included` attribute
+   * Finds a category by id in this.included and returns its name
+   */
+  private findCategory(categoryId: string): string {
+    const data = this.included.find(entity => entity.type === 'category' && entity.id === categoryId)
+    return data?.attributes.name ?? ''
+  }
+
+  /**
+   * Finds groups for a given tournamentId in this.included
    */
   private findGroups(tournamentId: string): ApiResponseData[] {
     return this.included
@@ -76,7 +83,7 @@ export default class TournamentMapper {
   }
 
   /**
-   * Finds rounds for a given groupId in `included` attribute
+   * Finds rounds for a given groupId in this.included
    */
   private findRounds(groupId: string): ApiResponseData[] {
     return this.included
@@ -98,7 +105,7 @@ export default class TournamentMapper {
   }
 
   /**
-   * Finds matches for a given roundId in `included` attribute
+   * Finds matches for a given roundId in this.included
    */
   private findMatches(roundId: string): ApiResponseData[] {
     return this.included
@@ -109,13 +116,14 @@ export default class TournamentMapper {
   /**
    * Maps from API object to Match
    */
-  private createMatch({ id, attributes, meta }: ApiResponseData, matches: Match[]): Match {
+  private createMatch({ id, attributes, meta, relationships }: ApiResponseData, matches: Match[]): Match {
     const match = {
       id: id,
       finished: attributes.finished,
       date: this.parseDate(attributes.date),
       homeTeam: this.findTeam(meta.home_team),
       awayTeam: this.findTeam(meta.away_team),
+      facility: this.findFacility(relationships?.facility?.data?.id)
     }
 
     matches.push(match)
@@ -123,7 +131,7 @@ export default class TournamentMapper {
   }
 
   /**
-   * Finds a team by id in `included` attribute and returns a mapped Team object
+   * Finds a team by id in this.included and returns a mapped Team object
    */
   private findTeam(teamId: string): Team | undefined {
     const data = this.included.find(entity => entity.type === 'team' && entity.id === teamId)
@@ -139,6 +147,14 @@ export default class TournamentMapper {
       name: attributes.name,
       image: meta.avatar.large
     }
+  }
+  
+  /**
+   * Finds a facility by id in this.included and returns its name
+   */
+  private findFacility(facilityId: string): string {
+    const data = this.included.find(entity => entity.type === 'facility' && entity.id === facilityId)
+    return data?.attributes.name ?? ''
   }
 
   /**

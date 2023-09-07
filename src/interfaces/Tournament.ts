@@ -6,6 +6,7 @@ export default interface Tournament {
   name: string;
   order: number;
   status: string;
+  category: string;
   nextMatches: Match[];
-  groups?: Group[];
+  groups: Group[];
 }

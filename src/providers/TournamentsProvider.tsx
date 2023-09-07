@@ -7,11 +7,13 @@ import TournamentMapper from "../util/TournamentMapper";
 interface IContext {
   tournaments?: Tournament[],
   error?: string,
+  loadedTournaments: string[],
   loadTournaments: () => void,
   loadTournament: (id: string) => void
 }
 
 export const TournamentsContext = createContext<IContext>({
+  loadedTournaments: [],
   loadTournaments: () => {},
   loadTournament: () => {}
 });
@@ -53,15 +55,17 @@ const reducer = (state: AppState, action: Action): AppState => {
 
 
 export default function TournamentsProvider({ children }: { children: ReactNode }) {
+  const [loadingTournaments, setLoadingTournaments] = useState<string[]>([]);
+  const [loadedTournaments, setLoadedTournaments] = useState<string[]>([]);
   const [state, dispatch] = useReducer(reducer, {});
   const [error, setError] = useState<string | undefined>();
 
   const loadTournaments = () => {
     if (!state.tournaments) {
       axios
-        .get<ApiListResponse>('https://api.leverade.com/tournaments?filter=season.id:6653,manager.id:314965&page[size]=100')
+        .get<ApiListResponse>('https://api.leverade.com/tournaments?filter=season.id:6653,manager.id:314965&include=groups,category&page[size]=100')
         .then(({ data }) => {
-          const mapper = new TournamentMapper({...data, included: []})
+          const mapper = new TournamentMapper(data)
           dispatch({ type: 'SET_TOURNAMENTS', payload: { tournaments: mapper.mapTournaments() } });
           setError(undefined)
         })
@@ -72,18 +76,21 @@ export default function TournamentsProvider({ children }: { children: ReactNode 
   }
 
   const loadTournament = (id: string) => {
-
     if(state.tournaments) {
       const tournament = state.tournaments.find(tournament => tournament.id === id)
 
+      if (tournament && !loadedTournaments.includes(tournament.id) && !loadingTournaments.includes(tournament.id) ) {
 
+        setLoadingTournaments(list => [...list, tournament.id])
 
-      if (tournament && !tournament.groups ) {
         axios
-        .get<ApiItemResponse>(`https://api.leverade.com/tournaments/${id}?include=groups,groups.rounds,groups.rounds.matches,groups.rounds.matches.facility,teams`)
+        .get<ApiItemResponse>(`https://api.leverade.com/tournaments/${id}?include=category,groups,groups.rounds,groups.rounds.matches,groups.rounds.matches.facility,teams`)
         .then(response => {
           const mapper = new TournamentMapper({data: [response.data.data], included: response.data.included})
           dispatch({ type: 'UPDATE_TOURNAMENT', payload: { id, tournament: mapper.mapTournaments()[0] } });
+
+          setLoadingTournaments(list => list.filter(item => item !== tournament.id))
+          setLoadedTournaments((list) => [...list, tournament.id])
         })
       }
     }
@@ -93,6 +100,7 @@ export default function TournamentsProvider({ children }: { children: ReactNode 
     <TournamentsContext.Provider value={{
       tournaments: state.tournaments,
       error,
+      loadedTournaments,
       loadTournaments,
       loadTournament
     }}>

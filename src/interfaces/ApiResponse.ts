@@ -12,8 +12,10 @@ export interface ApiResponseData {
   };
   relationships: {
     tournament: { data: { type: string, id: string}},
-    group: { data: { type: string, id: string}}
-    round: { data: { type: string, id: string}}
+    group: { data: { type: string, id: string}},
+    round: { data: { type: string, id: string}},
+    facility: { data: { type: string, id: string}},
+    category: { data: { type: string, id: string}},
   },
   meta: {
     away_team: string,

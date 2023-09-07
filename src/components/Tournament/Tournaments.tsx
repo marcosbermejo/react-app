@@ -13,8 +13,12 @@ export default function Tournaments() {
   if (!tournaments) return <Loading />
   
   return (
-    <Stack spacing={2} pb={9}>
-      {tournaments.map((tournament) => <Tournament key={tournament.id} tournament={tournament} /> )}
+    <Stack spacing={2} pb={9} pt={2}>
+      {
+        tournaments
+          .filter(tournament => tournament.groups.length > 0)
+          .map((tournament) => <Tournament key={tournament.id} tournament={tournament} /> )
+      }
     </Stack>
   )
 }
