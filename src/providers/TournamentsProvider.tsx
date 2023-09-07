@@ -63,7 +63,7 @@ export default function TournamentsProvider({ children }: { children: ReactNode 
   const loadTournaments = () => {
     if (!state.tournaments) {
       axios
-        .get<ApiListResponse>('https://api.leverade.com/tournaments?filter=season.id:6653,manager.id:314965&include=groups,category&page[size]=100')
+        .get<ApiListResponse>('http://localhost:3000')
         .then(({ data }) => {
           const mapper = new TournamentMapper(data)
           dispatch({ type: 'SET_TOURNAMENTS', payload: { tournaments: mapper.mapTournaments() } });
@@ -84,7 +84,7 @@ export default function TournamentsProvider({ children }: { children: ReactNode 
         setLoadingTournaments(list => [...list, tournament.id])
 
         axios
-        .get<ApiItemResponse>(`https://api.leverade.com/tournaments/${id}?include=category,groups,groups.rounds,groups.rounds.matches,groups.rounds.matches.facility,teams`)
+        .get<ApiItemResponse>(`http://localhost:3000`)
         .then(response => {
           const mapper = new TournamentMapper({data: [response.data.data], included: response.data.included})
           dispatch({ type: 'UPDATE_TOURNAMENT', payload: { id, tournament: mapper.mapTournaments()[0] } });
