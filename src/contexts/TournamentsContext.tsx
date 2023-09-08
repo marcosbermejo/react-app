@@ -33,37 +33,52 @@ interface Action {
 
 
 const reducer = (state: AppState, action: Action): AppState => {
+
   switch (action.type) {
     case 'UPDATE_TOURNAMENT':
+      if (!action.payload.tournament) return state
+      if (!state.tournaments) return { tournaments: [action.payload.tournament]}
+
       return {
         ...state,
-        tournaments: state.tournaments?.map(tournament =>
-          tournament.id === action.payload.id
-            ? { ...tournament, ...action.payload.tournament }
-            : tournament
-        ),
-      };
+        tournaments: 
+          state.tournaments.map(tournament => 
+            tournament.id === action.payload.id
+              ? { ...tournament, ...action.payload.tournament }
+              : tournament
+          ) };
+
     case 'SET_TOURNAMENTS':
       return {
         ...state,
-        tournaments: action.payload.tournaments,
+        tournaments: action.payload.tournaments?.map(tournament => 
+          state.tournaments?.find(t => t.id === tournament.id) ?? tournament
+        )
       };
+
     default:
       return state;
   }
 };
 
 
-export default function TournamentsProvider({ children }: { children: ReactNode }) {
+export function TournamentsProvider({ children }: { children: ReactNode }) {
+  const [isListLoading, setIsListLoading] = useState<boolean>(false);
+  const [isListLoaded, setIsListLoaded] = useState<boolean>(false);
+
   const [loadingTournaments, setLoadingTournaments] = useState<string[]>([]);
   const [loadedTournaments, setLoadedTournaments] = useState<string[]>([]);
+
   const [state, dispatch] = useReducer(reducer, {});
   const [error, setError] = useState<string | undefined>();
 
   const loadTournaments = () => {
-    if (!state.tournaments) {
+    if (!isListLoading && !isListLoaded) {
+
+      setIsListLoading(true)
+
       axios
-        .get<ApiListResponse>('https://localhost:3000')
+        .get<ApiListResponse>('http://localhost:3000')
         .then(({ data }) => {
           const mapper = new TournamentMapper(data)
           dispatch({ type: 'SET_TOURNAMENTS', payload: { tournaments: mapper.mapTournaments() } });
@@ -71,28 +86,28 @@ export default function TournamentsProvider({ children }: { children: ReactNode 
         })
         .catch(error => {
           setError(error.message)
+        }).finally(() => {
+          setIsListLoaded(true)
+          setIsListLoading(false)
         })
     }
   }
 
   const loadTournament = (id: string) => {
-    if(state.tournaments) {
-      const tournament = state.tournaments.find(tournament => tournament.id === id)
+    if (!loadedTournaments.includes(id) && !loadingTournaments.includes(id) ) {
 
-      if (tournament && !loadedTournaments.includes(tournament.id) && !loadingTournaments.includes(tournament.id) ) {
+      setLoadingTournaments(list => [...list, id])
 
-        setLoadingTournaments(list => [...list, tournament.id])
+      axios
+      .get<ApiItemResponse>(`http://localhost:3000`)
+      .then(response => {
+        const mapper = new TournamentMapper({data: [response.data.data], included: response.data.included})
+        const mappedTournament = mapper.mapTournaments()[0]
+        dispatch({ type: 'UPDATE_TOURNAMENT', payload: { id, tournament: mappedTournament } });
 
-        axios
-        .get<ApiItemResponse>(`https://localhost:3000`)
-        .then(response => {
-          const mapper = new TournamentMapper({data: [response.data.data], included: response.data.included})
-          dispatch({ type: 'UPDATE_TOURNAMENT', payload: { id, tournament: mapper.mapTournaments()[0] } });
-
-          setLoadingTournaments(list => list.filter(item => item !== tournament.id))
-          setLoadedTournaments((list) => [...list, tournament.id])
-        })
-      }
+        setLoadingTournaments(list => list.filter(item => item !== id))
+        setLoadedTournaments((list) => [...list, id])
+      })
     }
   };
 

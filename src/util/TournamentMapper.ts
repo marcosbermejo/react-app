@@ -78,6 +78,10 @@ export default class TournamentMapper {
     return {
       id: id,
       name: attributes.name,
+      type: attributes.type,
+      group: attributes.group,
+      promote: attributes.promote,
+      relegate: attributes.relegate,
       rounds: this.findRounds(id).map(round => this.createRound(round, matches, attributes.name))
     }
   }

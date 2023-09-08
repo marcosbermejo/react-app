@@ -2,6 +2,7 @@ import { Container } from '@mui/material';
 import { Outlet } from 'react-router-dom'
 import Header from './Header';
 import Navigation from './Navigation';
+import { ScrollRestoration } from "react-router-dom";
 
 export default function Root () {
   return (
@@ -9,6 +10,7 @@ export default function Root () {
       <Header />
       <Outlet />
       <Navigation />
+      <ScrollRestoration getKey={(location, matches) => location.pathname } />
     </Container>
   );
 }

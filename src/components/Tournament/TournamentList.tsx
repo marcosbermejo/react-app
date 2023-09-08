@@ -1,16 +1,22 @@
 import { useContext, useEffect } from 'react';
-import { Stack, Alert, FormControl, FormHelperText, MenuItem, InputLabel, Box, Paper, Typography, CardContent, Button, Card, CardActions } from "@mui/material";
+import { Stack, Alert, FormControl, MenuItem, Box, Typography, CardContent, Card } from "@mui/material";
 import Loading from "../../layout/Loading";
-import { TournamentsContext } from '../../providers/TournamentsProvider';
-import Tournament from './Tournament';
+import { TournamentsContext } from '../../contexts/TournamentsContext';
+import TournamentItem from './TournamentItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import React from 'react';
+import { HeaderContext } from '../../contexts/HeaderContext';
 
 export default function Tournaments() {
+  const { updateTitle, updatePrevious } = useContext(HeaderContext)
   const { loadTournaments, tournaments, error } = useContext(TournamentsContext)
   const [selectedCategory, setSelectedCategory] = React.useState(localStorage.getItem('tournaments.selectedCategory') ?? '');
 
-  useEffect(() => loadTournaments(), [])
+  useEffect(() => {
+    updateTitle('Competicions 2023 - 2024')
+    updatePrevious('')
+    loadTournaments()
+  }, [])
 
   if (error) return <Alert severity="error">{error}</Alert>
   if (!tournaments) return <Loading />
@@ -35,6 +41,7 @@ export default function Tournaments() {
             onChange={onChangeCategory}
             displayEmpty
             inputProps={{ 'aria-label': 'Without label' }}
+            sx={{backgroundColor: 'white'}}
           >
             <MenuItem value=""><em>Totes les categories</em></MenuItem>
             {categories.map((category, i) => <MenuItem key={category} value={category}>{category}</MenuItem>)}
@@ -54,7 +61,7 @@ export default function Tournaments() {
 
       )}
 
-      {filteredTournaments.map((tournament) => <Tournament key={tournament.id} tournament={tournament} />)}
+      {filteredTournaments.map((tournament) => <TournamentItem key={tournament.id} tournament={tournament} />)}
     </Stack>
   )
 }

@@ -1,9 +1,10 @@
 import { createBrowserRouter } from 'react-router-dom';
 
 import Root from '../layout/Root';
-import Tournaments from '../components/Tournament/Tournaments';
+import Tournaments from '../components/Tournament/TournamentList';
 import Teams from '../components/Team/Teams';
 import Stats from '../components/Stats/Stats';
+import TournamentDetail from '../components/Tournament/TournamentDetail';
 
 const Router = createBrowserRouter([
   {
@@ -13,7 +14,7 @@ const Router = createBrowserRouter([
       { path: '/', element: <Tournaments />},
       { path: '/teams', element: <Teams /> },
       { path: '/stats', element: <Stats /> },
-      { path: '/*', element: <Tournaments /> }
+      { path: '/:tournamentId', element: <TournamentDetail /> }
     ]
   }
 

@@ -1,16 +1,12 @@
 import { Typography, Card, CardContent, Stack, Box, Alert, Button, CardActions, Paper } from "@mui/material";
 import ITournament from "../../interfaces/Tournament";
 import Match from "../Match/Match";
-import { format } from "date-fns";
 import { useContext, useEffect, useRef } from "react";
-import { TournamentsContext } from "../../providers/TournamentsProvider";
+import { TournamentsContext } from "../../contexts/TournamentsContext";
 import Loading from "../../layout/Loading";
+import { Link as RouterLink } from "react-router-dom";
 
-const getTitle = (name: string) => name.split('-')?.[0] ?? ''
-const toTitleCase = (title: string) => title.replace(
-  /\w\S*/g,
-  (txt) => txt.charAt(0).toUpperCase() + txt.substring(1).toLowerCase()
-)
+const toTitleCase = (title: string) => title.charAt(0).toUpperCase() + title.substring(1).toLowerCase()
 
 export default function Tournament({ tournament }: { tournament: ITournament }) {
 
@@ -39,7 +35,7 @@ export default function Tournament({ tournament }: { tournament: ITournament }) 
     <Card variant="outlined" key={tournament.id} ref={ref as React.RefObject<HTMLDivElement>}>
       <CardContent sx={{pb: 0}}>
         <Typography variant="h6" textAlign="center" lineHeight={1} >
-          {toTitleCase(getTitle(tournament.name))}
+          {toTitleCase(tournament.name)}
         </Typography>
         <Typography color="text.secondary" textAlign="center">
           { tournament.category }
@@ -60,8 +56,8 @@ export default function Tournament({ tournament }: { tournament: ITournament }) 
         }
 
       </CardContent>
-      <CardActions sx={{ justifyContent: 'center', mb: 2 }}>
-        <Button size="small" variant="outlined">Veure més</Button>
+      <CardActions sx={{ justifyContent: 'center', mb: 2, px:4 }}>
+        <Button size={'large'} variant={'outlined'} fullWidth component={RouterLink} to={`/${tournament.id}`}>Veure més</Button>
       </CardActions>
     </Card>
 

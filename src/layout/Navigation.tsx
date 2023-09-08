@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { Link as RouterLink, useLocation } from "react-router-dom";
 
 import { Paper, BottomNavigation, BottomNavigationAction } from "@mui/material";
@@ -8,8 +8,9 @@ import QueryStatsIcon from '@mui/icons-material/QueryStats';
 
 export default function Navigation() {
   const location = useLocation();
-  const [value, setValue] = useState(location.pathname);
-
+  const isTournamentsPath = (path: string) => !['/teams', '/stats'].includes(path)
+  const [value, setValue] = useState(isTournamentsPath(location.pathname) ? '/' : location.pathname);
+  
   return (
     <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }} elevation={3}>
       <BottomNavigation

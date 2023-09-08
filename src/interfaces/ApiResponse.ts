@@ -8,7 +8,11 @@ export interface ApiResponseData {
     start_date: string,
     end_date: string,
     date: string,
-    finished: boolean
+    finished: boolean,
+    type: string,
+    group: string,
+    promote: number,
+    relegate: number,
   };
   relationships: {
     tournament: { data: { type: string, id: string}},
