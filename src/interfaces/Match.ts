@@ -7,4 +7,6 @@ export default interface Match {
   homeTeam?: Team;
   awayTeam?: Team;
   facility: string;
+  groupName: string;
+  roundName: string;
 }

@@ -78,7 +78,7 @@ export default class TournamentMapper {
     return {
       id: id,
       name: attributes.name,
-      rounds: this.findRounds(id).map(round => this.createRound(round, matches))
+      rounds: this.findRounds(id).map(round => this.createRound(round, matches, attributes.name))
     }
   }
 
@@ -94,13 +94,13 @@ export default class TournamentMapper {
   /**
    * Maps from API object to Ground
    */
-  private createRound({ id, attributes }: ApiResponseData, matches: Match[]): Round {
+  private createRound({ id, attributes }: ApiResponseData, matches: Match[], groupName: string): Round {
     return {
       id: id,
       name: attributes.name,
       start_date: this.parseDate(attributes.start_date),
       end_date: this.parseDate(attributes.end_date),
-      matches: this.findMatches(id).map(match => this.createMatch(match, matches))
+      matches: this.findMatches(id).map(match => this.createMatch(match, matches, groupName, attributes.name))
     }
   }
 
@@ -116,14 +116,16 @@ export default class TournamentMapper {
   /**
    * Maps from API object to Match
    */
-  private createMatch({ id, attributes, meta, relationships }: ApiResponseData, matches: Match[]): Match {
+  private createMatch({ id, attributes, meta, relationships }: ApiResponseData, matches: Match[], groupName: string, roundName: string): Match {
     const match = {
       id: id,
       finished: attributes.finished,
+      groupName: groupName,
+      roundName: roundName,
       date: this.parseDate(attributes.date),
       homeTeam: this.findTeam(meta.home_team),
       awayTeam: this.findTeam(meta.away_team),
-      facility: this.findFacility(relationships?.facility?.data?.id)
+      facility: this.findFacility(relationships?.facility?.data?.id),
     }
 
     matches.push(match)
