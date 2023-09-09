@@ -12,8 +12,9 @@ export default function Navigation() {
   const [value, setValue] = useState(isTournamentsPath(location.pathname) ? '/' : location.pathname);
   
   return (
-    <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }} elevation={3}>
+    <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 99 }} elevation={3}>
       <BottomNavigation
+        sx={{backgroundColor: 'white'}}
         showLabels
         value={value}
         onChange={(event, newValue) => {

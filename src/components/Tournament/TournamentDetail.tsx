@@ -25,7 +25,9 @@ export default function TournamentDetail() {
 
   useEffect(() => {
     updateTitle(tournament?.name ? toTitleCase(tournament.name) : '')
-    setSelectedGroupId(tournament?.groups[0]?.id)
+    setSelectedGroupId(
+      localStorage.getItem(`tournaments.${tournament?.id}.selectedGroup`) ?? tournament?.groups[0]?.id
+    )
   }, [tournament])
 
   if (!tournament) return <Loading />
@@ -46,8 +48,9 @@ export default function TournamentDetail() {
   const selectedGroup = tournament.groups.find(group => group.id === selectedGroupId)
   if (!selectedGroup) return <Alert severity="error">El grup no existeix: {selectedGroupId}</Alert>
 
-  const onChange = (event: SelectChangeEvent) => {
+  const onChangeSelectedGroupId = (event: SelectChangeEvent) => {
     setSelectedGroupId(event.target.value);
+    localStorage.setItem(`tournaments.${tournament.id}.selectedGroup`, event.target.value);
   };
 
   return (
@@ -56,7 +59,7 @@ export default function TournamentDetail() {
         <FormControl fullWidth>
           <Select
             value={selectedGroupId}
-            onChange={onChange}
+            onChange={onChangeSelectedGroupId}
             inputProps={{ 'aria-label': 'Without label' }}
             sx={{ backgroundColor: 'white' }}
           >
@@ -69,13 +72,13 @@ export default function TournamentDetail() {
       {
         selectedGroup.rounds.map(round => (
           <Card variant="outlined" key={round.id}>
-            <CardContent sx={{ pb: 0 }}>
+            <CardContent sx={{'&:last-child': {pb: 0} }}>
               <Typography variant="h6" textAlign="center" lineHeight={1} >
                 {toTitleCase(round.name)}
               </Typography>
 
               {
-                round.matches.map(match => <Box key={match.id}>
+                round.matches.map(match => <Box key={match.id} borderTop={1} my={2} borderColor={'grey.500'}>
                   <Match match={match} showRound={false} />
                 </Box>)
               }

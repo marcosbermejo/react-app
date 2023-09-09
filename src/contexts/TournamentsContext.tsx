@@ -78,7 +78,7 @@ export function TournamentsProvider({ children }: { children: ReactNode }) {
       setIsListLoading(true)
 
       axios
-        .get<ApiListResponse>('http://localhost:3000')
+        .get<ApiListResponse>('')
         .then(({ data }) => {
           const mapper = new TournamentMapper(data)
           dispatch({ type: 'SET_TOURNAMENTS', payload: { tournaments: mapper.mapTournaments() } });
@@ -99,7 +99,7 @@ export function TournamentsProvider({ children }: { children: ReactNode }) {
       setLoadingTournaments(list => [...list, id])
 
       axios
-      .get<ApiItemResponse>(`http://localhost:3000`)
+      .get<ApiItemResponse>(``)
       .then(response => {
         const mapper = new TournamentMapper({data: [response.data.data], included: response.data.included})
         const mappedTournament = mapper.mapTournaments()[0]
