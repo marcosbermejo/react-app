@@ -1,3 +1,4 @@
+import Group from "./Group";
 import Match from "./Match";
 
 export default interface Round {
@@ -5,5 +6,5 @@ export default interface Round {
   name: string;
   start_date?: Date;
   end_date?: Date;
-  matches: Match[];
+  group?: Group;
 }

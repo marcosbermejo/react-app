@@ -7,5 +7,4 @@ export default interface Group {
   group: string;
   promote: number;
   relegate: number;
-  rounds: Round[];
 }

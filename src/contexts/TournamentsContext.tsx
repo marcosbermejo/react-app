@@ -3,121 +3,144 @@ import { ReactNode, createContext, useState, useEffect, useReducer } from "react
 import Tournament from "../interfaces/Tournament";
 import { ApiItemResponse, ApiListResponse } from "../interfaces/ApiResponse";
 import TournamentMapper from "../util/TournamentMapper";
+import MatchesMapper from "../util/MatchesMapper";
+import Match from "../interfaces/Match";
+
+const baseURL = 'https://localhost.com'
 
 interface IContext {
-  tournaments?: Tournament[],
-  error?: string,
-  loadedTournaments: string[],
+  tournaments: StateTournament[]
+  loading: boolean
+  loaded: boolean
+  error: string
   loadTournaments: () => void,
-  loadTournament: (id: string) => void
+  loadMatches: (id: string) => void
 }
 
 export const TournamentsContext = createContext<IContext>({
-  loadedTournaments: [],
+  tournaments: [],
+  loading: false,
+  loaded: false,
+  error: '',
   loadTournaments: () => {},
-  loadTournament: () => {}
+  loadMatches: () => {}
 });
 
-interface AppState {
-  tournaments?: Tournament[];
+interface State {
+  tournaments: StateTournament[]
+  loading: boolean
+  loaded: boolean
+  error: string
 }
 
-interface Action {
-  type: 'UPDATE_TOURNAMENT' | 'SET_TOURNAMENTS';
-  payload: {
-    id?: string;
-    tournament?: Tournament;
-    tournaments?: Tournament[];
-  };
+interface StateTournament {
+  tournament: Tournament
+  loading: boolean
+  loaded: boolean
+  error: string
 }
 
+interface SetTournamentsLoadingAction { type: 'SET_TOURNAMENTS_LOADING' }
+interface SetTournamentsErrorAction { type: 'SET_TOURNAMENTS_ERROR', error: string }
 
-const reducer = (state: AppState, action: Action): AppState => {
+interface SetTournamentLoadingAction { type: 'SET_TOURNAMENT_LOADING', id: string }
+interface SetTournamentErrorAction { type: 'SET_TOURNAMENT_ERROR', id: string, error: string }
 
+interface SetTournamentsAction { type: 'SET_TOURNAMENTS', tournaments: Tournament[] }
+interface SetMatchesAction { type: 'SET_MATCHES', id: string, matches: Match[] }
+
+type Action = SetMatchesAction | SetTournamentsAction | 
+  SetTournamentsLoadingAction | SetTournamentsErrorAction |
+  SetTournamentLoadingAction | SetTournamentErrorAction;
+
+const reducer = (state: State, action: Action): State => {
   switch (action.type) {
-    case 'UPDATE_TOURNAMENT':
-      if (!action.payload.tournament) return state
-      if (!state.tournaments) return { tournaments: [action.payload.tournament]}
+    case 'SET_TOURNAMENTS_LOADING': 
+      return { ...state, loaded: false, loading: true, error: '' };
 
-      return {
-        ...state,
-        tournaments: 
-          state.tournaments.map(tournament => 
-            tournament.id === action.payload.id
-              ? { ...tournament, ...action.payload.tournament }
-              : tournament
-          ) };
+    case 'SET_TOURNAMENTS_ERROR':
+      return { ...state, loaded: false, loading: false, error: action.error };
 
     case 'SET_TOURNAMENTS':
-      return {
-        ...state,
-        tournaments: action.payload.tournaments?.map(tournament => 
-          state.tournaments?.find(t => t.id === tournament.id) ?? tournament
-        )
-      };
+      return { ...state, loaded: true, loading: false, error: '', tournaments: action.tournaments.map(tournament => ({ tournament, loading: false, error: '', loaded: false }))};
 
-    default:
+    case 'SET_TOURNAMENT_LOADING': 
+      return { ...state, tournaments: state.tournaments.map(stateTournament => (
+        stateTournament.tournament.id === action.id
+          ? { ...stateTournament, loaded: false, loading: true, error: '' }
+          : stateTournament
+      )) };
+
+    case 'SET_TOURNAMENT_ERROR':
+      return { ...state, tournaments: state.tournaments.map(stateTournament => (
+        stateTournament.tournament.id === action.id
+          ? { ...stateTournament, loaded: false, loading: false, error: action.error }
+          : stateTournament
+      )) };
+
+    case 'SET_MATCHES':
+      return { ...state, tournaments: state.tournaments.map(stateTournament => (
+        stateTournament.tournament.id === action.id
+          ? { ...stateTournament,  loaded: true, loading: false, error: '', tournament: { ...stateTournament.tournament, matches: action.matches } }
+          : stateTournament
+      )) };
+
+      default:
       return state;
   }
 };
 
 
 export function TournamentsProvider({ children }: { children: ReactNode }) {
-  const [isListLoading, setIsListLoading] = useState<boolean>(false);
-  const [isListLoaded, setIsListLoaded] = useState<boolean>(false);
+  const [state, dispatch] = useReducer(reducer, { tournaments: [], loaded: false, loading: false, error: '' });
+  
+  const loadTournaments = async () => {
+    if (!state.loaded) {
+      dispatch({ type: 'SET_TOURNAMENTS_LOADING' });
 
-  const [loadingTournaments, setLoadingTournaments] = useState<string[]>([]);
-  const [loadedTournaments, setLoadedTournaments] = useState<string[]>([]);
+      try {
+        const params= 'filter=season.id:6653,manager.id:314965&sort=order&include=category&page[size]=100'
+        const { data } = await axios.get<ApiListResponse>(`${baseURL}/tournaments?${params}`)
+        const mapper = new TournamentMapper(data)
+        dispatch({ type: 'SET_TOURNAMENTS', tournaments: mapper.mapTournaments() });
 
-  const [state, dispatch] = useReducer(reducer, {});
-  const [error, setError] = useState<string | undefined>();
-
-  const loadTournaments = () => {
-    if (!isListLoading && !isListLoaded) {
-
-      setIsListLoading(true)
-
-      axios
-        .get<ApiListResponse>('')
-        .then(({ data }) => {
-          const mapper = new TournamentMapper(data)
-          dispatch({ type: 'SET_TOURNAMENTS', payload: { tournaments: mapper.mapTournaments() } });
-          setError(undefined)
-        })
-        .catch(error => {
-          setError(error.message)
-        }).finally(() => {
-          setIsListLoaded(true)
-          setIsListLoading(false)
-        })
+      } catch (err: any) {
+        console.log(err)
+        dispatch({ type: 'SET_TOURNAMENTS_ERROR', error: err.message });
+      }
     }
   }
 
-  const loadTournament = (id: string) => {
-    if (!loadedTournaments.includes(id) && !loadingTournaments.includes(id) ) {
+  const loadMatches = async (id: string) => {
+    if (state.loaded) {
 
-      setLoadingTournaments(list => [...list, id])
+      const { tournament, loaded } = state.tournaments.find(({tournament}) => tournament.id === id) ?? {}
 
-      axios
-      .get<ApiItemResponse>(``)
-      .then(response => {
-        const mapper = new TournamentMapper({data: [response.data.data], included: response.data.included})
-        const mappedTournament = mapper.mapTournaments()[0]
-        dispatch({ type: 'UPDATE_TOURNAMENT', payload: { id, tournament: mappedTournament } });
+      if (tournament && !loaded) {
+        dispatch({ type: 'SET_TOURNAMENT_LOADING', id });
 
-        setLoadingTournaments(list => list.filter(item => item !== id))
-        setLoadedTournaments((list) => [...list, id])
-      })
+        try {
+          const params= `filter=round.group.tournament.id:${id}&sort=datetime&include=teams,round,round.group,facility&page[size]=100`
+          const { data: { data, included } } = await axios.get<ApiListResponse>(`${baseURL}/matches?${params}`)
+          const mapper = new MatchesMapper({data, included })
+          dispatch({ type: 'SET_MATCHES', id, matches: mapper.mapMatches() });        
+ 
+        } catch (err: any) {
+          console.log(err)
+          dispatch({ type: 'SET_TOURNAMENT_ERROR', id, error: err.message });
+        }
+      }
     }
   };
 
   return (
     <TournamentsContext.Provider value={{
       tournaments: state.tournaments,
-      error,
-      loadedTournaments,
+      loading: state.loading,
+      loaded: state.loaded,
+      error: state.error,
       loadTournaments,
-      loadTournament
+      loadMatches
     }}>
       {children}
     </TournamentsContext.Provider>

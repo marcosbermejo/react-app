@@ -26,17 +26,7 @@ function OptionalTeam({ team }: { team: ITeam | undefined }) {
   )
 }
 
-export default function Match({
-  match,
-  showDate = true,
-  showRound = true,
-  showFacility = true
-}: {
-  match: IMatch,
-  showDate?: boolean,
-  showRound?: boolean,
-  showFacility?: boolean,
-}) {
+export default function Match({ match }: { match: IMatch }) {
   const { homeTeam, awayTeam } = match
 
   const day = match.date ? format(match.date, `EEEE, d ${[3, 7, 9].includes(match.date.getMonth()) ? `'d\'\''` : `'de '`}MMMM`, { locale: ca }) : ''
@@ -49,24 +39,16 @@ export default function Match({
       </Grid>
       <Grid item xs={6} px={1}>
         <Stack height={'100%'} textAlign={'center'} fontSize={12} justifyContent={'center'} pb={1}>
-          {
-            showDate && <>
-              <Typography sx={{ '&::first-letter': { textTransform: 'uppercase' } }}>
-                {day}
-              </Typography>
-              <Typography fontSize={22} fontWeight={700}>
-                {hour}
-              </Typography>
-            </>
-          }
+          <Typography sx={{ '&::first-letter': { textTransform: 'uppercase' } }}>
+            {day}
+          </Typography>
+          <Typography fontSize={22} fontWeight={700}>
+            {hour}
+          </Typography>
 
-          {
-            showRound && <Typography>{match.roundName}</Typography>
-          }
+          <Typography>{match.round?.name}</Typography>
 
-          {
-            showFacility && <Typography fontSize={12}>{match.facility}</Typography>
-          }
+          <Typography fontSize={12}>{match.facility}</Typography>
 
         </Stack>
       </Grid>

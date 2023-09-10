@@ -11,7 +11,7 @@ export default function Header() {
   const { title, previous } = useContext(HeaderContext)
 
   return (
-    <Box pb={7}>
+    <Box pb={8}>
       <AppBar>
         <Toolbar>
           {
