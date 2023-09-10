@@ -13,6 +13,8 @@ export interface ApiResponseData {
     group: string,
     promote: number,
     relegate: number,
+    score: number,
+    value: number
   };
   relationships: {
     tournament?: { data?: { type: string, id: string}},
@@ -20,6 +22,8 @@ export interface ApiResponseData {
     round?: { data?: { type: string, id: string}},
     facility?: { data?: { type: string, id: string}},
     category?: { data?: { type: string, id: string}},
+    match?: { data?: { type: string, id: string}},
+    team?: { data?: { type: string, id: string}},
   },
   meta: {
     away_team: string,

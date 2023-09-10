@@ -6,7 +6,7 @@ import TournamentMapper from "../util/TournamentMapper";
 import MatchesMapper from "../util/MatchesMapper";
 import Match from "../interfaces/Match";
 
-const baseURL = 'https://localhost.com'
+const baseURL = 'https://localhost:3000'
 
 interface IContext {
   tournaments: StateTournament[]
@@ -92,14 +92,14 @@ const reducer = (state: State, action: Action): State => {
 
 
 export function TournamentsProvider({ children }: { children: ReactNode }) {
-  const [state, dispatch] = useReducer(reducer, { tournaments: [], loaded: false, loading: false, error: '' });
+  const [state, dispatch] = useReducer(reducer, { tournaments: [], loaded: false, loading: true, error: '' });
   
   const loadTournaments = async () => {
     if (!state.loaded) {
       dispatch({ type: 'SET_TOURNAMENTS_LOADING' });
 
       try {
-        const params= 'filter=season.id:6653,manager.id:314965&sort=order&include=category&page[size]=100'
+        const params= 'filter=season.id:6653,manager.id:314965&sort=order&include=category,groups,groups.rounds&page[size]=100'
         const { data } = await axios.get<ApiListResponse>(`${baseURL}/tournaments?${params}`)
         const mapper = new TournamentMapper(data)
         dispatch({ type: 'SET_TOURNAMENTS', tournaments: mapper.mapTournaments() });
@@ -120,7 +120,9 @@ export function TournamentsProvider({ children }: { children: ReactNode }) {
         dispatch({ type: 'SET_TOURNAMENT_LOADING', id });
 
         try {
-          const params= `filter=round.group.tournament.id:${id}&sort=datetime&include=teams,round,round.group,facility&page[size]=100`
+          const filter = `round.group.tournament.id:${id}`
+          const include = 'teams,round,round.group,facility,faceoff,results,periods,matchreferees.license.profile,periods.results'
+          const params= `filter=${filter}&sort=datetime&include=${include}&page[size]=100`
           const { data: { data, included } } = await axios.get<ApiListResponse>(`${baseURL}/matches?${params}`)
           const mapper = new MatchesMapper({data, included })
           dispatch({ type: 'SET_MATCHES', id, matches: mapper.mapMatches() });        

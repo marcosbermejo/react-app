@@ -2,7 +2,6 @@ import { parse } from 'date-fns'
 import { ApiResponseData, ApiListResponse } from '../interfaces/ApiResponse'
 import Match from '../interfaces/Match'
 import Team from '../interfaces/Team'
-import Group from '../interfaces/Group'
 import Round from '../interfaces/Round'
 
 export default class MatchesMapper {
@@ -27,6 +26,19 @@ export default class MatchesMapper {
       date: parse(`${attributes.date} Z`, 'yyyy-MM-dd HH:mm:ss X', new Date()),
       homeTeam: this.findTeam(meta.home_team),
       awayTeam: this.findTeam(meta.away_team),
+      results: this.findResults(id)
+    }))
+  }
+
+  private findResults(matchId: string) {
+    const data = this.included.filter(entity => entity.type === 'result' && entity.relationships?.match?.data?.id === matchId)
+    if (!data) return []
+
+    return data.map(({ id, attributes, relationships }) => ({
+      id: id,
+      score: attributes.score,
+      value: attributes.value,
+      team: this.findTeam(relationships.team?.data?.id ?? '')
     }))
   }
 
@@ -54,26 +66,7 @@ export default class MatchesMapper {
       name: data.attributes.name,
       start_date: this.parseDate(data.attributes.start_date),
       end_date: this.parseDate(data.attributes.end_date),
-      group: this.findGroup(data.relationships.group?.data?.id)
     } as Round : undefined
-  }
-
-  /**
-   * Finds a Group by id in this.included and returns a mapped Group object
-   */
-  private findGroup(groupId?: string): Group | undefined {
-    if (!groupId) return undefined;
-
-    const data = this.included.find(entity => entity.type === 'group' && entity.id === groupId)
-    return data ? {
-      id: data.id,
-      name: data.attributes.name,
-      type: data.attributes.type,
-      group: data.attributes.group,
-      promote: data.attributes.promote,
-      relegate: data.attributes.relegate,
-      rounds: []
-    } as Group : undefined
   }
 
   /**

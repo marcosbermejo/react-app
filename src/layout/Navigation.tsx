@@ -21,8 +21,8 @@ export default function Navigation() {
           setValue(newValue);
         }}
       >
-        <BottomNavigationAction value="/teams" component={RouterLink} to="/teams" label="Teams" icon={<SportsVolleyballIcon />} />
-        <BottomNavigationAction value="/" component={RouterLink} to="/" label="Tournaments" icon={<EmojiEventsIcon />} />
+        <BottomNavigationAction value="/teams" component={RouterLink} to="/teams" label="Equips" icon={<SportsVolleyballIcon />} />
+        <BottomNavigationAction value="/" component={RouterLink} to="/" label="Competicions" icon={<EmojiEventsIcon />} />
         <BottomNavigationAction value="/stats" component={RouterLink} to="/stats" label="Stats" icon={<QueryStatsIcon />} />
       </BottomNavigation>
     </Paper>

@@ -58,20 +58,35 @@ export default function Tournament({ id }: { id: string }) {
             <Typography textAlign="center" mb={2}>
               No hi ha partits definits per aquesta competició.
             </Typography>
-            
           </>
         }
 
         {
-          nextMatches?.map(match => (
-            <Box key={match.id} borderTop={1} my={2} borderColor={'grey.500'}>
+          loaded && nextMatches && nextMatches?.length > 0 && 
+          <Typography
+            fontWeight='bold'
+            variant='overline'
+            textAlign='center'
+            sx={{
+              display: 'block',
+              lineHeight: 1,
+              paddingTop: 2,
+              paddingBottom: 1
+            }}>Propers partits</Typography>
+        }
+
+        {
+          nextMatches?.map((match, i) => {
+            const mt = i === 0 ? 0 : 2
+            return <Box key={match.id} borderTop={1} mt={mt} mb={2} borderColor={'grey.500'}>
               <Match match={match} />
-            </Box>))
+            </Box>
+        })
         }
 
       </CardContent>
       <CardActions sx={{ justifyContent: 'center', mb: 2, px: 4 }}>
-        <Button size={'large'} variant={'outlined'} fullWidth component={RouterLink} to={`/${id}`}>Veure més</Button>
+        <Button size={'large'} variant={'contained'} component={RouterLink} to={`/${id}`}>Detalls</Button>
       </CardActions>
     </Card>
 
