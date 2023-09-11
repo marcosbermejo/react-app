@@ -1,0 +1,34 @@
+import { useContext, useState } from "react"
+import { Box, Alert, Paper, Stack, Tabs, Tab } from "@mui/material"
+import { TournamentsContext } from "../../../state/Tournaments/context"
+
+
+export default function Detail({ tournamentId }: { tournamentId: string }) {
+  const { state: { tournaments, loaded: listIsLoaded } } = useContext(TournamentsContext)
+  const [selectedTab, setSelectedTab] = useState(0);
+  const tournamentState = tournaments.find(({ tournament }) => tournament.id === tournamentId)
+
+  if (!listIsLoaded) return <></> 
+  if (!tournamentState) return <Alert severity="error">El Tournament amb id {tournamentId} no existeix.</Alert>
+
+  return (
+    <Stack spacing={2} pb={9} pt={2}>
+
+      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+        <Tabs value={selectedTab} onChange={(e, v) => setSelectedTab(v)} aria-label="basic tabs example">
+          <Tab label="Partits" value={0} />
+          <Tab label="Ranking" value={1} />
+        </Tabs>
+      </Box>
+
+      <Paper>
+        { selectedTab === 0 && <p>Partits</p>}
+      </Paper>
+
+      <Paper>
+        { selectedTab === 1 && <p>Ranking</p>}
+      </Paper>
+
+    </Stack>
+  )
+}

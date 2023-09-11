@@ -50,7 +50,7 @@ const setTournamentsError = (state: State, error: string): State => (
 )
 
 const setTournaments = (tournaments: Tournament[]): State => {
-  const tournamentsState  = tournaments.map(tournament => ({
+  const tournamentsState = tournaments.map((tournament): TournamentState => ({
     tournament,
     matchesState: { matches: [], loading: false, loaded: false, error: '' },
     groupsState: { groups: [], loading: false, loaded: false, error: '' }
@@ -60,9 +60,9 @@ const setTournaments = (tournaments: Tournament[]): State => {
 }
 
 const updateTournamentState = (state: State, tournamentId: string, data: Partial<TournamentState>): State => {
-  const tournaments = state.tournaments.map(tournamentState => (   
+  const tournaments = state.tournaments.map((tournamentState): TournamentState => (   
     tournamentState.tournament.id === tournamentId
-      ? {...tournamentState, data}
+      ? { ...tournamentState, ...data }
       : tournamentState
   ))
   return { ...state, tournaments }

@@ -4,7 +4,7 @@ import { TournamentsContext } from "./context";
 import { fetchGroups, fetchMatches, fetchTournaments } from "../../services/api";
 
 export default function TournamentsProvider({ children }: { children: ReactNode }) {
-  const [state, dispatch] = useReducer(reducer, { tournaments: [], loaded: false, loading: true, error: '' });
+  const [state, dispatch] = useReducer(reducer, { tournaments: [], loaded: false, loading: false, error: '' });
   
   return (
     <TournamentsContext.Provider value={{
@@ -36,7 +36,7 @@ export default function TournamentsProvider({ children }: { children: ReactNode 
         }
       },
       
-      loadStandings: async (tournamentId: string) => {
+      loadGroups: async (tournamentId: string) => {
         const tournamentState = state.tournaments.find(({tournament}) => tournament.id === tournamentId)       
         if (!tournamentState || tournamentState.groupsState.loaded || tournamentState.groupsState.loaded) return;
 

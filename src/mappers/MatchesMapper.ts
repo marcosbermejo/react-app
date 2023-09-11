@@ -104,6 +104,7 @@ export default class MatchesMapper {
       name: data.attributes.name,
       start_date: this.parseDate(data.attributes.start_date),
       end_date: this.parseDate(data.attributes.end_date),
+      groupId: data.relationships.group?.data?.id,
     } as Round : undefined
   }
 

@@ -3,4 +3,5 @@ export default interface Round {
   name: string;
   start_date?: Date;
   end_date?: Date;
+  groupId: string;
 }

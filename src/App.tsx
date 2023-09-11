@@ -1,7 +1,7 @@
 import Router from './layout/Router';
 import { RouterProvider } from 'react-router-dom';
-import { TournamentsProvider } from './contexts/Tournaments/TournamentsContext';
-import { HeaderProvider } from './contexts/HeaderContext';
+import TournamentsProvider from './state/Tournaments/provider';
+import HeaderProvider from './state/Header/provider';
 
 function App() {
   return (

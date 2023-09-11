@@ -9,8 +9,8 @@ export default function HeaderProvider({ children }: { children: ReactNode }) {
     <HeaderContext.Provider value={{
       title,
       previous,
-      updateTitle: (title: string) => setTitle(title),
-      updatePrevious: (path: string) => setPrevious(path)
+      updateTitle: (newTitle: string) => setTitle(newTitle),
+      updatePrevious: (newPath: string) => setPrevious(newPath)
     }}>
       {children}
     </HeaderContext.Provider>

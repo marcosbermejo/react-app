@@ -5,7 +5,7 @@ interface IContext {
   state: State,
   loadTournaments: () => void,
   loadMatches: (tournamentId: string) => void
-  loadStandings: (tournamentId: string, groupId: string) => void
+  loadGroups: (tournamentId: string) => void
 }
 
 export const TournamentsContext = createContext<IContext>({
@@ -17,5 +17,5 @@ export const TournamentsContext = createContext<IContext>({
   },
   loadTournaments: () => {},
   loadMatches: () => {},
-  loadStandings: () => {}
+  loadGroups: () => {}
 });
