@@ -7,7 +7,7 @@ import { ScrollRestoration } from "react-router-dom";
 export default function Root() {
   return (
     <Container maxWidth="md" sx={{ px: { xs: 0, sm: 2 } }}>
-      <Stack height={'100vh'}>
+      <Stack spacing={2} pb={9} pt={2}>
         <Header />
         <Outlet />
         <Navigation />

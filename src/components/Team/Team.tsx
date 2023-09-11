@@ -1,10 +1,10 @@
 import { Stack, Typography, Paper } from "@mui/material";
-import ITeam from "../../interfaces/Team";
+import ITeam from "../../models/Team";
 
 export default function Team({ team }: { team: ITeam }) {
   return (
     <Stack alignItems="center">
-      <Paper elevation={3} sx={{ mb: 1, minHeight: 80 }}>
+      <Paper elevation={3} sx={{ mb: 1 }}>
         <img
           src={team.image}
           alt={team.name}

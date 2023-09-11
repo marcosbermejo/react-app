@@ -4,7 +4,7 @@ import Root from '../layout/Root';
 import Tournaments from '../components/Tournament/TournamentList';
 import Teams from '../components/Team/Teams';
 import Stats from '../components/Stats/Stats';
-import TournamentDetail from '../components/Tournament/TournamentDetail';
+import TournamentDetail from '../components/Tournament/Detail/TournamentDetail';
 
 const Router = createBrowserRouter([
   {

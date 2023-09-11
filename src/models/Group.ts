@@ -1,4 +1,5 @@
 import Round from "./Round";
+import Standing from "./Standing";
 
 export default interface Group {
   id: string;
@@ -7,5 +8,5 @@ export default interface Group {
   group: string;
   promote: number;
   relegate: number;
-  rounds: Round[];
+  standings: Standing[]
 }

@@ -11,10 +11,10 @@ import { sliceEvents, EventContentArg, SlotLaneContentArg } from '@fullcalendar/
 import { DateProfile, ViewProps } from '@fullcalendar/core/internal'
 
 import styled from "@emotion/styled";
-import { ApiListResponse } from "../../interfaces/ApiResponse";
+import { ApiListResponse } from "../../models/ApiResponse";
 import { parse } from "date-fns";
-import Team from "../../interfaces/Team";
-import Match from "../../interfaces/Match";
+import Team from "../../models/Team";
+import Match from "../../models/Match";
 
 
 export const StyleWrapper = styled.div`
@@ -85,6 +85,7 @@ export default function Teams() {
           date: parse(`${attributes.date} Z`, 'yyyy-MM-dd HH:mm:ss X', new Date()),
           homeTeam: findTeam(meta.home_team),
           awayTeam: findTeam(meta.away_team),
+          periods: []
         })))
       })
 
