@@ -7,7 +7,7 @@ import Match from "../models/Match";
 import Group from "../models/Group";
 import GroupsMapper from "../mappers/GroupsMapper";
 
-const baseURL = 'https://api.leverade.com'
+const baseURL = 'https://localhost:3000'
 const seasonId = '6653'
 const managerId = '314965'
 
