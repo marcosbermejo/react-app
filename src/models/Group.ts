@@ -8,5 +8,6 @@ export default interface Group {
   group: string;
   promote: number;
   relegate: number;
-  standings: Standing[]
+  standings: Standing[];
+  rounds: Round[];
 }

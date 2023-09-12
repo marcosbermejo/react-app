@@ -40,6 +40,9 @@ export interface ApiResponseData {
     show_periods: boolean;
     updated_at: string;
     winning_points: number;   
+    first_text: string;
+    second_text: string;
+    winner: string;
   };
   relationships: {
     tournament?: { data?: ApiData},
@@ -52,6 +55,8 @@ export interface ApiResponseData {
     parent?: { data?: ApiData},
     period?: { data?: ApiData},
     periods?: { data?: ApiData[] },
+    first_team: { data?: ApiData}
+    second_team: { data?: ApiData}
   },
   meta: {
     away_team: string,
@@ -68,4 +73,31 @@ export interface ApiListResponse {
 export interface ApiItemResponse {
   data: ApiResponseData;
   included: ApiResponseData[];
+}
+export type StatsType = "score"
+  | "played_matches"
+  | "won_matches"
+  | "drawn_matches"
+  | "lost_matches"
+  | "value_against"
+  | "value_difference"
+  | "periods_value_regulation_time"
+  | "periods_value_against_regulation_time"
+  | "periods_value_difference_regulation_time"
+  | "periods_value"
+  | "periods_value_against"
+  | "periods_value_difference"
+
+export type ApiStandingsResponse = {
+  meta: {
+    standingsrows: {
+      id: string,
+      name: string,
+      position: number,
+      standingsstats: {
+        type: StatsType,
+        value: number
+      } []
+    } []
+  }
 }

@@ -1,14 +1,29 @@
-import { Stack, Typography, Paper } from "@mui/material";
+import { Stack, Typography, Paper, Box } from "@mui/material";
 import ITeam from "../../models/Team";
 
-export default function Team({ team }: { team: ITeam }) {
+export default function Team({ team, direction = 'column', size = 80 }: { team?: ITeam, direction?: 'column' | 'row', size?: number }) {
+
+  if (!team) return (
+    <Stack alignItems={direction === 'column' ? 'center' : 'flex-start' }>
+      <Box
+        bgcolor={'grey.300'}
+        width={size}
+        height={size}
+        display={'flex'}
+        justifyContent={'center'}
+        alignItems={'center'}>
+        <Typography fontSize={28}>?</Typography>
+      </Box>
+    </Stack>
+  )
+
   return (
-    <Stack alignItems="center">
-      <Paper elevation={3} sx={{ mb: 1 }}>
+    <Stack alignItems="center" flexDirection={direction} useFlexGap={true} spacing={1}>
+      <Paper elevation={3}>
         <img
           src={team.image}
           alt={team.name}
-          style={{ width: '100%', maxWidth: 80 }}
+          style={{ width: '100%', maxWidth: size }}
           loading="lazy"
         />
       </Paper>

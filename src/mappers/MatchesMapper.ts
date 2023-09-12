@@ -1,5 +1,5 @@
 import { parse } from 'date-fns'
-import { ApiResponseData, ApiListResponse, ApiData } from '../models/ApiResponse'
+import { ApiResponseData, ApiListResponse, ApiData } from '../services/ApiResponse'
 import Match from '../models/Match'
 import Team from '../models/Team'
 import Round from '../models/Round'
@@ -50,12 +50,12 @@ export default class MatchesMapper {
   /**
    * Returns a list of Periods for a given data array
    */
-  private findPeriods(data: ApiData[], matchId: string,  homeTeamId: string, awayTeamId: string) {
+  private findPeriods(data: ApiData[], matchId: string, homeTeamId: string, awayTeamId: string) {
     const periods: Period[] = []
 
-    data.forEach(({id}) => {
+    data.forEach(({ id }) => {
       const data = this.included.find(entity => entity.type === 'period' && entity.id === id)
-      if (data) periods.push( {
+      if (data) periods.push({
         id: data.id,
         name: data.attributes.name,
         finished: data.attributes.finished,
@@ -118,11 +118,11 @@ export default class MatchesMapper {
     return data?.attributes.name ?? ''
   }
 
-   /**
-   * Parses API Dates by manually set UTC (Z) in date
-   */
-    private parseDate(date: string): Date | undefined {
-      if (!date) return undefined
-      return parse(`${date} Z`, 'yyyy-MM-dd HH:mm:ss X', new Date());
-    };
+  /**
+  * Parses API Dates by manually set UTC (Z) in date
+  */
+  private parseDate(date: string): Date | undefined {
+    if (!date) return undefined
+    return parse(`${date} Z`, 'yyyy-MM-dd HH:mm:ss X', new Date());
+  };
 }

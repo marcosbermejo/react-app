@@ -1,4 +1,4 @@
-import { ApiResponseData, ApiListResponse } from '../models/ApiResponse'
+import { ApiResponseData, ApiListResponse } from '../services/ApiResponse'
 import Tournament from '../models/Tournament'
 
 export default class TournamentsMapper {

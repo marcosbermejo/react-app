@@ -24,7 +24,7 @@ export default function TournamentsProvider({ children }: { children: ReactNode 
 
       loadMatches: async (tournamentId: string) => {
         const tournamentState = state.tournaments.find(({tournament}) => tournament.id === tournamentId)       
-        if (!tournamentState || tournamentState.matchesState.loaded || tournamentState.matchesState.loaded) return;
+        if (!tournamentState || tournamentState.matchesState.loaded || tournamentState.matchesState.loading) return;
 
         try {
           dispatch({ type: 'SET_MATCHES_LOADING', tournamentId });
@@ -38,7 +38,7 @@ export default function TournamentsProvider({ children }: { children: ReactNode 
       
       loadGroups: async (tournamentId: string) => {
         const tournamentState = state.tournaments.find(({tournament}) => tournament.id === tournamentId)       
-        if (!tournamentState || tournamentState.groupsState.loaded || tournamentState.groupsState.loaded) return;
+        if (!tournamentState || tournamentState.groupsState.loaded || tournamentState.groupsState.loading) return;
 
         try {
           dispatch({ type: 'SET_GROUPS_LOADING', tournamentId });
@@ -48,7 +48,7 @@ export default function TournamentsProvider({ children }: { children: ReactNode 
           console.log(err)
           dispatch({ type: 'SET_GROUPS_ERROR', tournamentId, error: err.message });
         }
-      },
+      }
     }}>
       {children}
     </TournamentsContext.Provider>

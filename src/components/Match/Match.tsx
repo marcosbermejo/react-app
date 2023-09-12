@@ -1,30 +1,9 @@
-import { Box, Grid, Skeleton, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
-import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
+import { Grid, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 
 import IMatch from "../../models/Match";
-import ITeam from "../../models/Team";
-import Team from "../Team/Team";
 import { format } from "date-fns";
 import { ca } from 'date-fns/locale'
-
-function OptionalTeam({ team }: { team: ITeam | undefined }) {
-  if (team) return <Team team={team} />
-
-  return (
-    <Stack alignItems="center">
-      <Box
-        bgcolor={'grey.300'}
-        width={80}
-        height={80}
-        display={'flex'}
-        justifyContent={'center'}
-        alignItems={'center'}>
-        <QuestionMarkIcon />
-      </Box>
-    </Stack>
-
-  )
-}
+import Team from "../Team/Team";
 
 export default function Match({ match }: { match: IMatch }) {
   const { homeTeam, awayTeam } = match
@@ -74,7 +53,7 @@ export default function Match({ match }: { match: IMatch }) {
   return (
     <Grid container my={3}>
       <Grid item xs={3}>
-        <OptionalTeam team={homeTeam} />
+        <Team team={homeTeam} />
       </Grid>
       <Grid item xs={6}>
         { match.finished && <Typography textAlign={'center'}>Finalitzat</Typography>}
@@ -82,7 +61,7 @@ export default function Match({ match }: { match: IMatch }) {
         { match.finished ? partials : detail }
       </Grid>
       <Grid item xs={3}>
-        <OptionalTeam team={awayTeam} />
+        <Team team={awayTeam} />
       </Grid>
     </Grid>
   )
