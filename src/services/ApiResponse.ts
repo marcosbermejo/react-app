@@ -55,8 +55,11 @@ export interface ApiResponseData {
     parent?: { data?: ApiData},
     period?: { data?: ApiData},
     periods?: { data?: ApiData[] },
-    first_team: { data?: ApiData}
-    second_team: { data?: ApiData}
+    first_team: { data?: ApiData},
+    second_team: { data?: ApiData},
+    faceoff?: { data?: ApiData},
+    first_previous_faceoff: { data?: ApiData}
+    second_previous_faceoff: { data?: ApiData}
   },
   meta: {
     away_team: string,

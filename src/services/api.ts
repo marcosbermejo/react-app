@@ -9,7 +9,7 @@ import GroupsMapper from "../mappers/GroupsMapper";
 import Standing from "../models/Standing";
 import StandingsMapper from "../mappers/StandingsMapper";
 
-const baseURL = 'https://localhost:3000'
+const baseURL = 'https://api.leverade.com'
 const seasonId = '6653'
 const managerId = '314965'
 

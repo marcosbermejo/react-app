@@ -54,11 +54,13 @@ export default class GroupsMapper {
     const data = this.included.filter(entity => entity.type === 'faceoff' && entity.relationships.round?.data?.id === roundId)
     return data.map(({ id, attributes, relationships }): Faceoff => ({
       id,
-      first_text: attributes.first_text,
-      second_text: attributes.second_text,
+      firstText: attributes.first_text,
+      secondText: attributes.second_text,
       winner: attributes.winner,
-      first_team: this.findTeam(relationships.first_team.data?.id ?? ''),
-      second_team: this.findTeam(relationships.second_team?.data?.id ?? '')
+      firstTeam: this.findTeam(relationships.first_team.data?.id ?? ''),
+      secondTeam: this.findTeam(relationships.second_team?.data?.id ?? ''),
+      firstPreviousFaceoffId: relationships.first_previous_faceoff.data?.id,
+      secondPreviousFaceoffId: relationships.second_previous_faceoff.data?.id,
     }))
   }
 

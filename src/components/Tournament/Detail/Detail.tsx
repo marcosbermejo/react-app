@@ -66,7 +66,7 @@ export default function Detail({ tournamentId }: { tournamentId: string }) {
   const group = groupsState?.groups.find(group => group.id === selectedGroupId)
 
   const ranking = group 
-    ? (group?.type === 'play_off' ? <Brackets rounds={group.rounds} /> : <Standings standings= {group.standings} />)
+    ? (group?.type === 'play_off' ? <Brackets rounds={group.rounds} matches={matchesState?.matches} /> : <Standings standings= {group.standings} />)
     : <Loading />
 
   return (

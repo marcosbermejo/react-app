@@ -13,4 +13,5 @@ export default interface Match {
   awayTeamResult?: number;
   round?: Round;
   periods: Period[];
+  faceoffId?: string;
 }
