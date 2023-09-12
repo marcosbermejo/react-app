@@ -9,7 +9,7 @@ import GroupsMapper from "../mappers/GroupsMapper";
 import Standing from "../models/Standing";
 import StandingsMapper from "../mappers/StandingsMapper";
 
-const baseURL = 'https://localhost:3000'
+const baseURL = process.env.REACT_APP_API_URL
 const seasonId = '6653'
 const managerId = '314965'
 
