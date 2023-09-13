@@ -51,11 +51,11 @@ export default function Match({ match }: { match: IMatch }) {
   )
 
   return (
-    <Grid container my={3}>
+    <Grid container>
       <Grid item xs={3}>
         <Team team={homeTeam} />
       </Grid>
-      <Grid item xs={6}>
+      <Grid item xs={6} px={1}>
         { match.finished && <Typography textAlign={'center'}>Finalitzat</Typography>}
         { match.finished && <Typography fontSize={22} fontWeight={700} textAlign={'center'}>{match.homeTeamResult} - {match.awayTeamResult}</Typography> }
         { match.finished ? partials : detail }

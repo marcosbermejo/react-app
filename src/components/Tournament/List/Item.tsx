@@ -1,4 +1,4 @@
-import { Typography, Card, CardContent, Box, Alert, Button, CardActions, CardProps } from "@mui/material";
+import { Typography, Card, CardContent, Box, Alert, Button, CardActions, CardProps, Stack } from "@mui/material";
 import Match from "../../Match/Match";
 import { ReactNode, useContext, useEffect, useRef } from "react";
 import Loading from "../../../layout/Loading";
@@ -6,6 +6,8 @@ import { Link as RouterLink } from "react-router-dom";
 import { TournamentsContext } from "../../../state/Tournaments/context";
 import Debug from "../../../layout/Debug";
 import React from "react";
+import { format } from "date-fns";
+import { ca } from "date-fns/locale";
 
 const toTitleCase = (title: string) => title.charAt(0).toUpperCase() + title.substring(1).toLowerCase()
 
@@ -16,7 +18,6 @@ const ItemCard = React.forwardRef<any, CardProps>(({ children, ...props }, ref) 
     </CardContent>
   </Card>
 ))
-
 
 export default function Item({ tournamentId }: { tournamentId: string }) {
   const ref = useRef<HTMLDivElement>();
@@ -64,17 +65,19 @@ export default function Item({ tournamentId }: { tournamentId: string }) {
 
   const nextMatchesList = (
     <>
-      <Typography fontWeight='bold' variant='overline' textAlign='center' sx={{
+      <Typography py={2} fontWeight='bold' textAlign='left' sx={{
         display: 'block',
         lineHeight: 1,
-        paddingTop: 2,
-        paddingBottom: 1
-      }}>Propers partits</Typography>
+        borderTop: 1
+      }}>Propers partits:</Typography>
 
       {
         nextMatches.map((match, i) => {
+          const bb = i === nextMatches.length -1 ? 0 : 1
+          const mb = i === nextMatches.length -1 ? 0 : 2
           const mt = i === 0 ? 0 : 2
-          return <Box key={match.id} borderTop={1} mt={mt} mb={2} borderColor={'grey.500'}>
+
+          return <Box key={match.id} borderBottom={bb} mb={mb} mt={mt} borderColor={'grey.500'}>
             <Match match={match} />
           </Box>
         })
@@ -82,27 +85,40 @@ export default function Item({ tournamentId }: { tournamentId: string }) {
     </>
   )
 
+  const dateTitle = () => {
+    const matchesWithDate = matches.filter(match => match.date)
+    const firstMatchDate = matchesWithDate.length > 0 ? matchesWithDate[0].date : ''
+    const lastMatchDate = matchesWithDate.length > 1 ? matchesWithDate.at(-1)?.date : ''
+    const firstDate = firstMatchDate ? format(firstMatchDate, `d ${[3, 7, 9].includes(firstMatchDate.getMonth()) ? `'d\'\''` : `'de '`}MMMM`, { locale: ca }) : ''
+    const lastDate = lastMatchDate ? format(lastMatchDate, `d ${[3, 7, 9].includes(lastMatchDate.getMonth()) ? `'d\'\''` : `'de '`}MMMM`, { locale: ca }) : ''      
+    return (firstDate && lastDate) ? `Del ${firstDate} al ${lastDate}` : (firstDate || lastDate)
+  }
+
   return (
     <ItemCard sx={{ height: loaded ? 'none' : '500px' }} ref={ref as React.RefObject<HTMLDivElement>}>
-      <Typography variant="h6" textAlign="center" lineHeight={1} >
-        {toTitleCase(tournament.name)}
-      </Typography>
+      <Stack flexDirection={'row'} pb={2} alignItems={'center'}>
+        <Box>
+          <Typography variant="h6" lineHeight={1} >
+            {toTitleCase(tournament.name)}
+          </Typography>
 
-      <Typography color="text.secondary" textAlign="center">
-        {tournament.category}
-      </Typography>
+          <Typography mt={1} >
+            {tournament.category}
+          </Typography>
+
+          <Typography  color="text.secondary" fontSize={14}>
+            { matches ? dateTitle() : ''}
+          </Typography>
+        </Box>
+        <Box>
+          <Button variant={'contained'} component={RouterLink} to={`/${tournamentId}`}>Detalls</Button>
+        </Box>
+      </Stack>
 
       {error && <Alert severity="error">{error}</Alert>}
       {loading && <Loading />}
       {loaded ? (nextMatches.length === 0 ? emptyMatches : nextMatchesList) : <></>}
 
-      {
-        loaded && nextMatches.length > 0 && (
-          <CardActions sx={{ justifyContent: 'center' }}>
-            <Button size={'large'} variant={'contained'} component={RouterLink} to={`/${tournamentId}`}>Detalls</Button>
-          </CardActions>
-        )
-      }
     </ItemCard>
   )
 }

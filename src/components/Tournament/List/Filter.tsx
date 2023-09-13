@@ -1,4 +1,4 @@
-import { FormControl, MenuItem, Select, SelectChangeEvent } from "@mui/material";
+import { FormControl, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material";
 
 export interface FilterProps {
   categories: string[],
@@ -8,14 +8,15 @@ export interface FilterProps {
 
 export default function Filter({ categories, selected, onChange }: FilterProps) {
   return (
-    <FormControl fullWidth>
+    <FormControl fullWidth sx={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+      <Typography>Categoria:</Typography>
       <Select
         displayEmpty
         value={selected}
         onChange={(event: SelectChangeEvent) => onChange(event.target.value)}
-        sx={{ backgroundColor: 'white' }}
+        sx={{ ml: 2, backgroundColor: 'white', fontWeight: 'bold', textAlign:'center', fontSize: 18, flexGrow: 1 }}
       >
-        <MenuItem value=""><em>Totes les categories</em></MenuItem>
+        <MenuItem value="">Totes les categories</MenuItem>
         {categories.map(category => <MenuItem key={category} value={category}>{category}</MenuItem>)}
       </Select>
     </FormControl>
