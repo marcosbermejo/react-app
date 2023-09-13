@@ -1,10 +1,9 @@
-import { Typography, Card, CardContent, Box, Alert, Button, CardActions, CardProps, Stack } from "@mui/material";
+import { Typography, Card, CardContent, Box, Alert, Button, CardProps, Stack } from "@mui/material";
 import Match from "../../Match/Match";
-import { ReactNode, useContext, useEffect, useRef } from "react";
+import { useContext, useEffect, useRef } from "react";
 import Loading from "../../../layout/Loading";
 import { Link as RouterLink } from "react-router-dom";
 import { TournamentsContext } from "../../../state/Tournaments/context";
-import Debug from "../../../layout/Debug";
 import React from "react";
 import { format } from "date-fns";
 import { ca } from "date-fns/locale";
@@ -110,7 +109,7 @@ export default function Item({ tournamentId }: { tournamentId: string }) {
             { matches ? dateTitle() : ''}
           </Typography>
         </Box>
-        <Box>
+        <Box display={'flex'} flexGrow={1} justifyContent={'center'}>
           <Button variant={'contained'} component={RouterLink} to={`/${tournamentId}`}>Detalls</Button>
         </Box>
       </Stack>
