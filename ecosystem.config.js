@@ -29,7 +29,7 @@ module.exports = {
       path: '/var/www/html/fcn',
       key: '/home/marcos/ana.pem',
       ssh_options: ['ForwardAgent=yes'],
-      'post-deploy': 'npm install && pm2 reload ecosystem.config.js --env production'
+      'post-deploy': 'npm install && npm run build && pm2 reload ecosystem.config.js --env production'
     },
     staging: {},
     dev : {}
