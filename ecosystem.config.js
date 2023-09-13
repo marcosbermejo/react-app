@@ -19,8 +19,7 @@ module.exports = {
    * http://pm2.keymetrics.io/docs/usage/deployment/
    */
   deploy : {
-    production : {},
-    staging: {
+    production : {
       user: 'ubuntu',
       host: '3.249.19.249',
       ref: 'origin/main',
@@ -30,6 +29,7 @@ module.exports = {
       ssh_options: ['ForwardAgent=yes'],
       'post-deploy': 'npm install && pm2 reload ecosystem.config.js --env production'
     },
+    staging: {},
     dev : {}
   }
 };
