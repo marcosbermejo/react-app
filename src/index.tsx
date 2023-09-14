@@ -11,6 +11,15 @@ import { ThemeProvider } from '@emotion/react';
 import { createTheme } from '@mui/material';
 
 const theme = createTheme({
+  components: {
+    MuiTypography: {
+      styleOverrides: {
+        root: {
+          userSelect: 'none'
+        }
+      }
+    }
+  },
   palette: {
     background: {
       default: "#e6e6e6"

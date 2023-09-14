@@ -54,9 +54,9 @@ export default function Detail({ tournamentId }: { tournamentId: string }) {
   
   const matchesList = matchesState && matchesState.loaded 
     ? matchesState.matches
-      .filter(match => match.round?.groupId == selectedGroupId)
-      .filter(match => match.date)
-      .map((match, i) => (
+      .filter(({match}) => match.round?.groupId == selectedGroupId)
+      .filter(({match}) => match.date)
+      .map(({match}, i) => (
       <Paper key={match.id}>
         <Match match={match} />
       </Paper>
@@ -66,7 +66,7 @@ export default function Detail({ tournamentId }: { tournamentId: string }) {
   const group = groupsState?.groups.find(group => group.id === selectedGroupId)
 
   const ranking = group 
-    ? (group?.type === 'play_off' ? <Brackets rounds={group.rounds} matches={matchesState?.matches} /> : <Standings standings= {group.standings} />)
+    ? (group?.type === 'play_off' ? <Brackets rounds={group.rounds} matches={matchesState?.matches.map(({match}) => match)} /> : <Standings standings= {group.standings} />)
     : <Loading />
 
   return (

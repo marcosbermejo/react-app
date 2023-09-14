@@ -21,6 +21,7 @@ export default class MatchesMapper {
   public mapMatches(): Match[] {
     return this.data.map(({ id, attributes, meta, relationships }): Match => ({
       id,
+      tournamentId: relationships.tournament?.data?.id ?? '',
       finished: attributes.finished,
       round: this.findRound(relationships.round?.data?.id),
       facility: this.findFacility(relationships.facility?.data?.id),

@@ -4,6 +4,7 @@ import Team from "./Team";
 
 export default interface Match {
   id: string;
+  tournamentId: string;
   finished: boolean;
   facility?: string;
   date?: Date;

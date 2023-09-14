@@ -14,7 +14,7 @@ export default function Filter({ categories, selected, onChange }: FilterProps) 
         displayEmpty
         value={selected}
         onChange={(event: SelectChangeEvent) => onChange(event.target.value)}
-        sx={{ ml: 2, backgroundColor: 'white', fontWeight: 'bold', textAlign:'center', fontSize: 18, flexGrow: 1 }}
+        sx={{ ml: 2, backgroundColor: 'white', fontWeight: 'bold', textAlign:'left', fontSize: 18, flexGrow: 1 }}
       >
         <MenuItem value="">Totes les categories</MenuItem>
         {categories.map(category => <MenuItem key={category} value={category}>{category}</MenuItem>)}

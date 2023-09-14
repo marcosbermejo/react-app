@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { AppBar, Box, IconButton, Toolbar, Typography } from "@mui/material";
-import { Link as RouterLink } from "react-router-dom";
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { Link as RouterLink, useNavigate } from "react-router-dom";
+import MenuIcon from '@mui/icons-material/Menu';
 import { HeaderContext } from "../state/Header/context";
 
 const toTitleCase = (title: string) => (
@@ -10,20 +10,19 @@ const toTitleCase = (title: string) => (
 )
 
 export default function Header() {
-  const { title, previous } = useContext(HeaderContext)
+  const { title } = useContext(HeaderContext)
+  const navigate = useNavigate();
 
   return (
     <AppBar>
       <Toolbar>
         {
-          previous &&
           <IconButton
             size="large"
             edge="start"
             color="inherit"
-            component={RouterLink} to={previous}
           >
-            <ArrowBackIcon />
+            <MenuIcon  />
           </IconButton>
         }
 

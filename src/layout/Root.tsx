@@ -4,6 +4,7 @@ import Header from './Header';
 import Navigation from './Navigation';
 import { ScrollRestoration } from "react-router-dom";
 
+
 export default function Root() {
   return (
     <Container maxWidth="md" sx={{ px: { xs: 0, sm: 2 } }}>
@@ -12,7 +13,7 @@ export default function Root() {
           <Outlet />
         </Stack>
         <Navigation />
-      <ScrollRestoration getKey={(location, matches) => location.pathname} />
+      <ScrollRestoration />
     </Container>
   );
 }

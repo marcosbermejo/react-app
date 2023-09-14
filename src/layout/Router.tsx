@@ -5,6 +5,7 @@ import Tournaments from '../pages/Tournaments';
 import Tournament from '../pages/Tournament';
 import Teams from '../pages/Teams';
 import Stats from '../pages/Stats';
+import Match from '../pages/Match';
 
 const Router = createBrowserRouter([
   {
@@ -14,7 +15,8 @@ const Router = createBrowserRouter([
       { path: '/', element: <Tournaments />},
       { path: '/teams', element: <Teams /> },
       { path: '/stats', element: <Stats /> },
-      { path: '/:tournamentId', element: <Tournament /> }
+      { path: '/:tournamentId', element: <Tournament /> },
+      { path: '/:tournamentId/matches/:matchId', element: <Match /> }
     ]
   }
 ])

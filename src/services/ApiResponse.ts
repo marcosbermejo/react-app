@@ -104,3 +104,12 @@ export type ApiStandingsResponse = {
     } []
   }
 }
+
+export type LiveScoringResponse = {
+  team: string;
+  result: string;
+  minute: string;
+  number: string;
+  player: string;
+  text: string;
+}

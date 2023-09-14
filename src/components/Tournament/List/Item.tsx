@@ -51,8 +51,8 @@ export default function Item({ tournamentId }: { tournamentId: string }) {
   const { tournament } = tournamentState
 
   const nextMatches = matches
-    .filter(match => match.homeTeam || match.awayTeam)
-    .filter(match => match.date && match.date > new Date())
+    .filter(({match}) => match.homeTeam || match.awayTeam)
+    .filter(({match}) => match.date && match.date > new Date())
     .slice(0, 3)
 
   const emptyMatches = (
@@ -71,12 +71,12 @@ export default function Item({ tournamentId }: { tournamentId: string }) {
       }}>Propers partits:</Typography>
 
       {
-        nextMatches.map((match, i) => {
+        nextMatches.map(({match}, i) => {
           const bb = i === nextMatches.length -1 ? 0 : 1
           const mb = i === nextMatches.length -1 ? 0 : 2
           const mt = i === 0 ? 0 : 2
 
-          return <Box key={match.id} borderBottom={bb} mb={mb} mt={mt} borderColor={'grey.500'}>
+          return <Box key={match.id} borderBottom={bb} mb={mb} mt={mt} py={2} borderColor={'grey.500'}>
             <Match match={match} />
           </Box>
         })
@@ -85,7 +85,7 @@ export default function Item({ tournamentId }: { tournamentId: string }) {
   )
 
   const dateTitle = () => {
-    const matchesWithDate = matches.filter(match => match.date)
+    const matchesWithDate = matches.map(({match}) => match).filter(match => match.date)
     const firstMatchDate = matchesWithDate.length > 0 ? matchesWithDate[0].date : ''
     const lastMatchDate = matchesWithDate.length > 1 ? matchesWithDate.at(-1)?.date : ''
     const firstDate = firstMatchDate ? format(firstMatchDate, `d ${[3, 7, 9].includes(firstMatchDate.getMonth()) ? `'d\'\''` : `'de '`}MMMM`, { locale: ca }) : ''
@@ -97,7 +97,7 @@ export default function Item({ tournamentId }: { tournamentId: string }) {
     <ItemCard sx={{ height: loaded ? 'none' : '500px' }} ref={ref as React.RefObject<HTMLDivElement>}>
       <Stack flexDirection={'row'} pb={2} alignItems={'center'}>
         <Box>
-          <Typography variant="h6" lineHeight={1} >
+          <Typography variant="h6" lineHeight={1} pr={1} >
             {toTitleCase(tournament.name)}
           </Typography>
 

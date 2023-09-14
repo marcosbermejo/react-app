@@ -1,7 +1,7 @@
 import { ReactNode, useReducer } from "react";
 import reducer from "./reducer";
 import { TournamentsContext } from "./context";
-import { fetchGroups, fetchMatches, fetchTournaments } from "../../services/api";
+import { fetchGroups, fetchMatches, fetchTournaments, fetchMatch } from "../../services/api";
 
 export default function TournamentsProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(reducer, { tournaments: [], loaded: false, loading: false, error: '' });
@@ -28,14 +28,16 @@ export default function TournamentsProvider({ children }: { children: ReactNode 
 
         try {
           dispatch({ type: 'SET_MATCHES_LOADING', tournamentId });
-          dispatch({ type: 'SET_MATCHES', tournamentId, matches: await fetchMatches(tournamentId) });        
+          const matches = await fetchMatches(tournamentId)
+          matches.forEach(match => match.tournamentId = tournamentId)
+          dispatch({ type: 'SET_MATCHES', tournamentId, matches });        
  
         } catch (err: any) {
           console.log(err)
           dispatch({ type: 'SET_MATCHES_ERROR', tournamentId, error: err.message });
         }
       },
-      
+
       loadGroups: async (tournamentId: string) => {
         const tournamentState = state.tournaments.find(({tournament}) => tournament.id === tournamentId)       
         if (!tournamentState || tournamentState.groupsState.loaded || tournamentState.groupsState.loading) return;
@@ -48,6 +50,27 @@ export default function TournamentsProvider({ children }: { children: ReactNode 
           console.log(err)
           dispatch({ type: 'SET_GROUPS_ERROR', tournamentId, error: err.message });
         }
+      },
+
+      loadMatch: async (tournamentId: string, matchId: string) => {
+        const tournamentState = state.tournaments.find(({tournament}) => tournament.id === tournamentId)       
+        if (!tournamentState) return;
+
+        const matchState = tournamentState.matchesState.matches.find(({match}) => match.id === matchId)
+        if (!matchState || matchState.loaded || matchState.loading) return;
+
+        try {
+          dispatch({ type: 'SET_MATCH_LOADING', tournamentId, matchId });
+          const match =  await fetchMatch(tournamentId, matchId)
+          if (!match) throw Error('Match not found')
+
+          dispatch({ type: 'SET_MATCH', tournamentId, matchId, match });        
+           
+        } catch (err: any) {
+          console.log(err)
+          dispatch({ type: 'SET_MATCH_ERROR', tournamentId, matchId, error: err.message });
+        }
+
       }
     }}>
       {children}

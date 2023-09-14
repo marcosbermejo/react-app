@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ApiListResponse, ApiStandingsResponse } from "./ApiResponse";
+import { ApiListResponse, ApiStandingsResponse, LiveScoringResponse } from "./ApiResponse";
 import TournamentMapper from "../mappers/TournamentsMapper";
 import Tournament from "../models/Tournament";
 import MatchesMapper from "../mappers/MatchesMapper";
@@ -10,6 +10,8 @@ import Standing from "../models/Standing";
 import StandingsMapper from "../mappers/StandingsMapper";
 
 const baseURL = process.env.REACT_APP_API_URL
+const scrURL = process.env.REACT_APP_SCR_URL
+
 const seasonId = '6653'
 const managerId = '314965'
 
@@ -24,7 +26,7 @@ export const fetchTournaments = async (): Promise<Tournament[]> => {
 
 export const fetchMatches = async (tournamentId: string): Promise<Match[]> => {
   const filter = `round.group.tournament.id:${tournamentId}`
-  const include = 'teams,round,facility,results,periods,matchreferees.license.profile,periods.results'
+  const include = 'teams,round,facility,results,periods,periods.results'
   const url = `${baseURL}/matches?filter=${filter}&sort=datetime&include=${include}&page[size]=100`
   const { data } = await axios.get<ApiListResponse>(url)
   const mapper = new MatchesMapper(data)
@@ -53,3 +55,22 @@ export const fetchStandings = async (groupId: string): Promise<Standing[]> => {
   const mapper = new StandingsMapper(data)
   return mapper.mapStandings()
 }
+
+// https://api.leverade.com/teams?filter=id:14452927&include=participants.license.profile
+
+// https://actawp.natacio.cat/ca/tournament/1222183/match/130515107/live-scoring
+
+export const fetchMatch = async (tournamentId: string, matchId: string): Promise<Match | undefined> => {
+  const include = 'teams,round,facility,results,periods,matchreferees.license.profile,periods.results'
+
+  const url = `${baseURL}/matches?filter=id:${matchId}&include=${include}`
+  const { data } = await axios.get<ApiListResponse>(url)
+
+  const mapper = new MatchesMapper(data)
+  const match = mapper.mapMatches()[0]
+
+  const { data: scoring } = await axios.get<LiveScoringResponse>(`${scrURL}/tournament/${tournamentId}/match/${matchId}`)
+
+  return match
+}
+

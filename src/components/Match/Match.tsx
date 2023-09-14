@@ -1,9 +1,10 @@
-import { Grid, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
+import { Link, Grid, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 
 import IMatch from "../../models/Match";
 import { format } from "date-fns";
 import { ca } from 'date-fns/locale'
 import Team from "../Team/Team";
+import { Link as RouterLink } from "react-router-dom";
 
 export default function Match({ match }: { match: IMatch }) {
   const { homeTeam, awayTeam } = match
@@ -20,49 +21,51 @@ export default function Match({ match }: { match: IMatch }) {
         {hour}
       </Typography>
 
-      <Typography>{match.round?.name}</Typography>
+      <Typography sx={{ userSelect: 'none' }}>{match.round?.name}</Typography>
 
       <Typography fontSize={12}>{match.facility}</Typography>
 
     </Stack>
   )
 
-  const hasPenalties =  match.periods[4]?.homeTeamResult > 0 || match.periods[4]?.awayTeamResult > 0
+  const hasPenalties = match.periods[4]?.homeTeamResult > 0 || match.periods[4]?.awayTeamResult > 0
 
   const partials = (
     <Table size="small">
       <TableHead>
         <TableRow>
-          { match.periods.slice(0, 4).map(period => <TableCell key={period.id}>{period.name}</TableCell>)}
-          { hasPenalties && <TableCell>P</TableCell> }
+          {match.periods.slice(0, 4).map((period, i) => <TableCell sx={{ p: 1 }} key={period.id}>Q{i + 1}</TableCell>)}
+          {hasPenalties && <TableCell sx={{ p: 1 }}>P</TableCell>}
         </TableRow>
       </TableHead>
       <TableBody>
         <TableRow>
-          { match.periods.slice(0, 4).map(period => <TableCell key={period.id}>{period.homeTeamResult}</TableCell>)}
-          { hasPenalties && <TableCell>{ match.periods[4].homeTeamResult}</TableCell> }
+          {match.periods.slice(0, 4).map(period => <TableCell sx={{ p: 1 }} key={period.id}>{period.homeTeamResult}</TableCell>)}
+          {hasPenalties && <TableCell sx={{ p: 1 }}>{match.periods[4].homeTeamResult}</TableCell>}
         </TableRow>
         <TableRow>
-          {match.periods.slice(0, 4).map(period => <TableCell key={period.id}>{period.awayTeamResult}</TableCell>)}
-          { hasPenalties && <TableCell>{ match.periods[4].awayTeamResult}</TableCell> }
+          {match.periods.slice(0, 4).map(period => <TableCell sx={{ p: 1 }} key={period.id}>{period.awayTeamResult}</TableCell>)}
+          {hasPenalties && <TableCell sx={{ p: 1 }}>{match.periods[4].awayTeamResult}</TableCell>}
         </TableRow>
       </TableBody>
     </Table>
   )
 
   return (
-    <Grid container>
-      <Grid item xs={3}>
-        <Team team={homeTeam} />
+    <Link component={RouterLink} to={`/${match.tournamentId}/matches/${match.id}`} color="inherit" underline="none">
+      <Grid container>
+        <Grid item xs={3}>
+          <Team team={homeTeam} />
+        </Grid>
+        <Grid item xs={6} px={1}>
+          {match.finished && <Typography textAlign={'center'}>Finalitzat</Typography>}
+          {match.finished && <Typography fontSize={22} fontWeight={700} textAlign={'center'}>{match.homeTeamResult} - {match.awayTeamResult}</Typography>}
+          {match.finished ? partials : detail}
+        </Grid>
+        <Grid item xs={3}>
+          <Team team={awayTeam} />
+        </Grid>
       </Grid>
-      <Grid item xs={6} px={1}>
-        { match.finished && <Typography textAlign={'center'}>Finalitzat</Typography>}
-        { match.finished && <Typography fontSize={22} fontWeight={700} textAlign={'center'}>{match.homeTeamResult} - {match.awayTeamResult}</Typography> }
-        { match.finished ? partials : detail }
-      </Grid>
-      <Grid item xs={3}>
-        <Team team={awayTeam} />
-      </Grid>
-    </Grid>
+    </Link>
   )
 }

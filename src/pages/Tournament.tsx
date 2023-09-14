@@ -7,15 +7,11 @@ import Detail from "../components/Tournament/Detail/Detail"
 
 export default function Tournament() {
   const { tournamentId } = useParams()
-  const { updateTitle, updatePrevious } = useContext(HeaderContext)
+  const { updateTitle } = useContext(HeaderContext)
   const { state } = useContext(TournamentsContext)
 
   const tournamentState = state.tournaments.find(({ tournament }) => tournament.id === tournamentId)
   const tournament = tournamentState?.tournament
-
-  useEffect(() => {
-    updatePrevious('/')
-  }, [])
 
   useEffect(() => {
     if (tournament) {
