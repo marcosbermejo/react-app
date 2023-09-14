@@ -56,10 +56,6 @@ export const fetchStandings = async (groupId: string): Promise<Standing[]> => {
   return mapper.mapStandings()
 }
 
-// https://api.leverade.com/teams?filter=id:14452927&include=participants.license.profile
-
-// https://actawp.natacio.cat/ca/tournament/1222183/match/130515107/live-scoring
-
 export const fetchMatch = async (tournamentId: string, matchId: string): Promise<Match | undefined> => {
   const include = 'teams,round,facility,results,periods,matchreferees.license.profile,periods.results'
 
