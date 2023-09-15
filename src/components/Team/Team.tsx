@@ -12,7 +12,7 @@ type TeamProps = {
 export default function Team({ team, direction = 'column', size = 80, fontSize = 12, defaultText }: TeamProps) {
   return (
     <Stack alignItems="center" flexDirection={direction} useFlexGap={true} spacing={1}>
-      <Paper elevation={3} sx={{p: 0.5}}>
+      <Paper elevation={3}>
         {
           team
             ? <img src={team.image} alt={team.name} style={{ width: '100%', maxWidth: size, display:'block' }} loading="lazy"/>

@@ -104,7 +104,7 @@ export default class MatchesMapper {
     return data ? {
       id: data.id,
       name: data.attributes.name,
-      image: data.meta.avatar.large
+      image: data.relationships.club?.data?.id ? `/${data.relationships.club.data.id}.jpg` : ''
     } as Team : undefined
   }
 

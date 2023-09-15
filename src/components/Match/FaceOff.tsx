@@ -12,11 +12,6 @@ export default function FaceOff({ name, faceoff, matches }: { name: string, face
   const firstTeam = faceoff.firstTeam
   const secondTeam = faceoff.secondTeam
 
-  const formatDate = (date?: Date) => {
-    return date ? format(date, `EEEE, d ${[3, 7, 9].includes(date.getMonth()) ? `'d\'\''` : `'de '`}MMMM HH:mm`, { locale: ca }) : ''
-  }
-
-
   return (
     <Stack spacing={1} useFlexGap={true} p={1} alignItems={'center'} >
       <Typography textAlign={'center'} borderBottom={1} mb={1} fontSize={{ xs: 10, sm: 12 }}>
@@ -37,11 +32,7 @@ export default function FaceOff({ name, faceoff, matches }: { name: string, face
             ))
           }
         </Stack>
-        {
-          matches.map(match => (
-            match.finished ? '' : <Typography key={match.id} maxWidth={120} textAlign={'center'} fontWeight={'bold'}>{formatDate(match.date)}</Typography>
-          ))
-        }
+
         <Stack direction={'row'} justifyContent={'center'} spacing={2} mt={1}>
           {
             matches.map(match => (

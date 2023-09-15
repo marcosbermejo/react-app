@@ -17,7 +17,7 @@ const managerId = '314965'
 
 export const fetchTournaments = async (): Promise<Tournament[]> => {
   const filter = `season.id:${seasonId},manager.id:${managerId}`
-  const include = 'category,teams'
+  const include = 'category,teams.club'
   const url = `${baseURL}/tournaments?filter=${filter}&sort=order&include=${include}&page[size]=100`
   const { data } = await axios.get<ApiListResponse>(url)
   const mapper = new TournamentMapper(data)

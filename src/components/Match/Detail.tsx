@@ -59,7 +59,7 @@ export default function Detail({ tournamentId, matchId }: { tournamentId: string
         <Stack px={2}>
           <Paper sx={{ pb: 2, textAlign: 'center' }}>
             <Typography py={2} fontSize={18} textAlign={'center'} fontWeight={'bold'}>Àrbitres</Typography>
-            {match.referees.map(referee => <Typography py={1} textTransform={'capitalize'}>{referee.name}</Typography>)}
+            {match.referees.map(referee => <Typography key={referee.id} py={1} textTransform={'capitalize'}>{referee.name}</Typography>)}
           </Paper>
         </Stack>
 

@@ -42,10 +42,10 @@ export default class TournamentsMapper {
       entity.relationships.registrable?.data?.type === 'tournament' &&
       entity.relationships.registrable?.data?.id === tournamentId))
 
-    return data.map(({ id, attributes, meta }): Team => ({
+    return data.map(({ id, attributes, meta, relationships }): Team => ({
       id: id,
       name: attributes.name,
-      image: meta.avatar.large
+      image: relationships.club?.data?.id ? `/${relationships.club.data.id}.jpg` : ''
     }))
   }
 

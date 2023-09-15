@@ -6,6 +6,7 @@ import React from "react";
 import { format } from "date-fns";
 import { ca } from "date-fns/locale";
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import Team from "../../../models/Team";
 
 const toTitleCase = (title: string) => title.charAt(0).toUpperCase() + title.substring(1).toLowerCase()
 
@@ -51,6 +52,8 @@ export default function Item({ tournamentId }: { tournamentId: string }) {
 
   const { label, color } = statuses[tournament.status]
 
+  const logos: Record<string, Team> = tournament.teams.reduce((prev, curr) => ({...prev, [curr.image]: curr}), {})
+
   return (
     <ItemCard ref={ref as React.RefObject<HTMLDivElement>}>
       <Stack>
@@ -70,8 +73,12 @@ export default function Item({ tournamentId }: { tournamentId: string }) {
           </Typography>
 
 
-          {tournament.teams.map(team => (
-            <img key={team.id} src={team.image} alt={team.name} title={team.name} style={{ width: 48, margin: '4px' }} loading="lazy" />))}
+
+          {
+            Object.entries(logos).map(([image, team]) => (
+              <img key={team.id} src={image} alt={team.name} title={team.name} style={{ width: '17%', margin: '4px' }} loading="lazy" />
+            ))
+          }
 
 
         </Box>

@@ -25,6 +25,13 @@ export interface ApiResponseData {
     score: number,
     value: number,
     active: boolean;
+    code: string,
+    country: string,
+    detailed_info: string,
+    email: string,
+    headquarter: string,
+    phone: string,
+    selection: string,    
     drawing_points: number
     duration: any;
     edit_points: boolean;
@@ -53,6 +60,7 @@ export interface ApiResponseData {
     group?: { data?: ApiData},
     round?: { data?: ApiData},
     facility?: { data?: ApiData},
+    club?: { data?: ApiData},
     category?: { data?: ApiData},
     match?: { data?: ApiData},
     team?: { data?: ApiData},
