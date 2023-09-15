@@ -4,14 +4,14 @@ import { Link as RouterLink, useLocation } from "react-router-dom";
 import { Paper, BottomNavigation, BottomNavigationAction } from "@mui/material";
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import SportsVolleyballIcon from '@mui/icons-material/SportsVolleyball';
-import QueryStatsIcon from '@mui/icons-material/QueryStats';
+import FeedIcon from '@mui/icons-material/Feed';
 
 export default function Navigation() {
   const location = useLocation();
   const [value, setValue] = useState('');
 
   useEffect(() => {
-    const isTournamentsPath = (path: string) => !['/teams', '/stats'].includes(path)
+    const isTournamentsPath = (path: string) => !['/teams', '/news'].includes(path)
     setValue(isTournamentsPath(location.pathname) ? '/' : location.pathname);
   }, [location])
   
@@ -27,7 +27,7 @@ export default function Navigation() {
       >
         <BottomNavigationAction value="/teams" component={RouterLink} to="/teams" label="Equips" icon={<SportsVolleyballIcon />} />
         <BottomNavigationAction value="/" component={RouterLink} to="/" label="Competicions" icon={<EmojiEventsIcon />} />
-        <BottomNavigationAction value="/stats" component={RouterLink} to="/stats" label="Stats" icon={<QueryStatsIcon />} />
+        <BottomNavigationAction value="/news" component={RouterLink} to="/news" label="Notícies" icon={<FeedIcon />} />
       </BottomNavigation>
     </Paper>
   )

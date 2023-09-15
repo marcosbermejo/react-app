@@ -36,7 +36,7 @@ export default function Brackets({ rounds, matches }: { rounds: Round[], matches
             <Stack key={round.id} direction={'row'} spacing={1} useFlexGap={true} height={32}>
               {
                 Array.from(Array(Math.floor(round.faceoffs.length / 2)).keys()).map(i => (
-                  <Box flexGrow={1} height={'auto'} display={'flex'} justifyContent={'center'}>
+                  <Box key={i} flexGrow={1} height={'auto'} display={'flex'} justifyContent={'center'}>
                     <Stack width={'50%'}>
                       <Box borderLeft={1} borderRight={1} borderBottom={1} width={'100%'} height={'100%'}></Box>
                       <Box borderRight={1} width={'50%'} height={'100%'}></Box>

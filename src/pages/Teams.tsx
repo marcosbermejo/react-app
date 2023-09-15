@@ -1,5 +1,6 @@
 import { useContext, useEffect } from "react"
 import { HeaderContext } from "../state/Header/context"
+import { Alert } from "@mui/material"
 
 export default function Teams () {
   const { updateTitle } = useContext(HeaderContext)
@@ -10,7 +11,7 @@ export default function Teams () {
 
   return (
     <>
-      <p>Teams</p>
+      <Alert severity="warning">Pàgina en construcció</Alert>
     </>
   )
 

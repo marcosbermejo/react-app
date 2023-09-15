@@ -4,6 +4,7 @@ import Match from '../models/Match'
 import Team from '../models/Team'
 import Round from '../models/Round'
 import Period from '../models/Period'
+import Profile from '../models/Profile'
 
 export default class MatchesMapper {
 
@@ -22,6 +23,8 @@ export default class MatchesMapper {
     return this.data.map(({ id, attributes, meta, relationships }): Match => ({
       id,
       tournamentId: relationships.tournament?.data?.id ?? '',
+      canceled: attributes.canceled, 
+      postponed: attributes.postponed, 
       finished: attributes.finished,
       round: this.findRound(relationships.round?.data?.id),
       facility: this.findFacility(relationships.facility?.data?.id),
@@ -32,7 +35,17 @@ export default class MatchesMapper {
       awayTeamResult: this.findMatchResult(id, meta.away_team),
       periods: relationships.periods?.data ? this.findPeriods(relationships.periods.data, id, meta.home_team, meta.away_team) : [],
       faceoffId: relationships.faceoff?.data?.id,
-      steps: []
+      scoring: [],
+      referees: this.findReferees()
+    }))
+  }
+
+
+  private findReferees(): Profile[] {
+    return this.included.filter( entity => entity.type === 'profile').map(({id, attributes, links}):Profile => ({
+      id,
+      name: (attributes.first_name + ' ' + attributes.last_name).toLowerCase(),
+      image: links?.images?.image?.large ?? ''
     }))
   }
 

@@ -72,6 +72,9 @@ export const fetchStandings = async (groupId: string): Promise<Standing[]> => {
   return mapper.mapStandings()
 }
 
+export const fetchTeam = async (teamId: string) => {
+}
+
 export const fetchMatch = async (tournamentId: string, matchId: string): Promise<Match | undefined> => {
   const include = 'teams,round,facility,results,periods,matchreferees.license.profile,periods.results'
 
@@ -81,7 +84,9 @@ export const fetchMatch = async (tournamentId: string, matchId: string): Promise
   const mapper = new MatchesMapper(data)
   const match = mapper.mapMatches()[0]
 
-  const { data: scoring } = await axios.get<LiveScoringResponse>(`${scrURL}/tournament/${tournamentId}/match/${matchId}`)
+  const { data: scoring } = await axios.get<LiveScoringResponse[]>(`${scrURL}/tournament/${tournamentId}/match/${matchId}`)
+
+  match.scoring = scoring
 
   return match
 }

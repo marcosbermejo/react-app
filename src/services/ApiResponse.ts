@@ -8,12 +8,16 @@ export interface ApiResponseData {
   type: string;
   attributes: {
     name: string,
+    first_name: string,
+    last_name: string,
     order: number,
     status: string,
     start_date: string,
     end_date: string,
     date: string,
     finished: boolean,
+    postponed: boolean,
+    canceled: boolean,
     type: string,
     group: string,
     promote: number,
@@ -66,7 +70,8 @@ export interface ApiResponseData {
     away_team: string,
     home_team: string,
     avatar: { large: string }
-  }
+  },
+  links?: { images?: { image?: { large?: string }}}
 }
 
 export interface ApiListResponse {

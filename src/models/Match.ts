@@ -1,4 +1,6 @@
+import { LiveScoringResponse } from "../services/ApiResponse";
 import Period from "./Period";
+import Player from "./Profile";
 import Round from "./Round";
 import Team from "./Team";
 
@@ -6,6 +8,8 @@ export default interface Match {
   id: string;
   tournamentId: string;
   finished: boolean;
+  postponed: boolean;
+  canceled: boolean;
   facility?: string;
   date?: Date;
   homeTeam?: Team;
@@ -15,12 +19,6 @@ export default interface Match {
   round?: Round;
   periods: Period[];
   faceoffId?: string;
-  steps: {
-    team: 'first' | 'second';
-    result: string;
-    minute: string;
-    number: string;
-    player: string;
-    text: string;
-  }[]
+  scoring: LiveScoringResponse[],
+  referees: Player[]
 }
