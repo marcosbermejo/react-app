@@ -22,7 +22,7 @@ const theme = createTheme({
   },
   palette: {
     background: {
-      default: "#e6e6e6"
+      default: "#f8f8f8"
     }
   }
 });

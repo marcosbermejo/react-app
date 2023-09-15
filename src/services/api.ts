@@ -17,11 +17,27 @@ const managerId = '314965'
 
 export const fetchTournaments = async (): Promise<Tournament[]> => {
   const filter = `season.id:${seasonId},manager.id:${managerId}`
-  const include = 'category'
+  const include = 'category,teams'
   const url = `${baseURL}/tournaments?filter=${filter}&sort=order&include=${include}&page[size]=100`
   const { data } = await axios.get<ApiListResponse>(url)
   const mapper = new TournamentMapper(data)
   return mapper.mapTournaments()
+}
+
+export const fetchFirstMatch = async (tournamentId: string): Promise<Match[]> => {
+  const filter = `round.group.tournament.id:${tournamentId},!datetime:null`
+  const url = `${baseURL}/matches?filter=${filter}&sort=datetime&page[size]=1`
+  const { data } = await axios.get<ApiListResponse>(url)
+  const mapper = new MatchesMapper({data: data.data, included: []})
+  return mapper.mapMatches()
+}
+
+export const fetchLastMatch = async (tournamentId: string): Promise<Match[]> => {
+  const filter = `round.group.tournament.id:${tournamentId},!datetime:null`
+  const url = `${baseURL}/matches?filter=${filter}&sort=-datetime&page[size]=1`
+  const { data } = await axios.get<ApiListResponse>(url)
+  const mapper = new MatchesMapper({data: data.data, included: []})
+  return mapper.mapMatches()
 }
 
 export const fetchMatches = async (tournamentId: string): Promise<Match[]> => {

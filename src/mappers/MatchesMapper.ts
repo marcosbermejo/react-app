@@ -31,7 +31,8 @@ export default class MatchesMapper {
       homeTeamResult: this.findMatchResult(id, meta.home_team),
       awayTeamResult: this.findMatchResult(id, meta.away_team),
       periods: relationships.periods?.data ? this.findPeriods(relationships.periods.data, id, meta.home_team, meta.away_team) : [],
-      faceoffId: relationships.faceoff?.data?.id
+      faceoffId: relationships.faceoff?.data?.id,
+      steps: []
     }))
   }
 

@@ -15,4 +15,12 @@ export default interface Match {
   round?: Round;
   periods: Period[];
   faceoffId?: string;
+  steps: {
+    team: 'first' | 'second';
+    result: string;
+    minute: string;
+    number: string;
+    player: string;
+    text: string;
+  }[]
 }

@@ -1,7 +1,8 @@
 import { ReactNode, useReducer } from "react";
 import reducer from "./reducer";
 import { TournamentsContext } from "./context";
-import { fetchGroups, fetchMatches, fetchTournaments, fetchMatch } from "../../services/api";
+import { fetchGroups, fetchMatches, fetchTournaments, fetchMatch, fetchFirstMatch, fetchLastMatch } from "../../services/api";
+import Tournament from "../../models/Tournament";
 
 export default function TournamentsProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(reducer, { tournaments: [], loaded: false, loading: false, error: '' });
@@ -19,6 +20,22 @@ export default function TournamentsProvider({ children }: { children: ReactNode 
         } catch (err: any) {
           console.log(err)
           dispatch({ type: 'SET_TOURNAMENTS_ERROR', error: err.message });
+        }
+      },
+
+      loadDates: async (tournamentId: string) => {
+        const tournamentState = state.tournaments.find(({tournament}) => tournament.id === tournamentId)       
+        if (!tournamentState || tournamentState.tournament.start) return;
+
+        try {
+
+          const firstMatch = (await fetchFirstMatch(tournamentId))[0]
+          const lastMatch = (await fetchLastMatch(tournamentId))[0]
+
+          dispatch({ type: 'SET_TOURNAMENT_DATES', tournamentId, start: firstMatch?.date, end: lastMatch?.date });
+  
+        } catch (err: any) {
+          console.log(err)
         }
       },
 

@@ -1,5 +1,6 @@
 import { ApiResponseData, ApiListResponse } from '../services/ApiResponse'
 import Tournament from '../models/Tournament'
+import Team from '../models/Team'
 
 export default class TournamentsMapper {
 
@@ -20,7 +21,8 @@ export default class TournamentsMapper {
       status: attributes.status,
       order: attributes.order,
       name: attributes.name,
-      category: this.findCategory(relationships.category?.data?.id)
+      category: this.findCategory(relationships.category?.data?.id),
+      teams: this.findTeams(id)
     }))
   }
 
@@ -32,6 +34,19 @@ export default class TournamentsMapper {
 
     const data = this.included.find(entity => entity.type === 'category' && entity.id === categoryId)
     return data?.attributes.name ?? ''
+  }
+
+  private findTeams(tournamentId: string): Team[] {
+    const data = this.included.filter(entity => (
+      entity.type === 'team' && 
+      entity.relationships.registrable?.data?.type === 'tournament' &&
+      entity.relationships.registrable?.data?.id === tournamentId))
+
+    return data.map(({ id, attributes, meta }): Team => ({
+      id: id,
+      name: attributes.name,
+      image: meta.avatar.large
+    }))
   }
 
 }

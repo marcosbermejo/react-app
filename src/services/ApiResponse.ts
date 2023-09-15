@@ -52,6 +52,7 @@ export interface ApiResponseData {
     category?: { data?: ApiData},
     match?: { data?: ApiData},
     team?: { data?: ApiData},
+    registrable?: { data?: ApiData},
     parent?: { data?: ApiData},
     period?: { data?: ApiData},
     periods?: { data?: ApiData[] },
@@ -106,7 +107,7 @@ export type ApiStandingsResponse = {
 }
 
 export type LiveScoringResponse = {
-  team: string;
+  team: 'first' | 'second';
   result: string;
   minute: string;
   number: string;

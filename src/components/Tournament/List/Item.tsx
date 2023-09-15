@@ -1,12 +1,11 @@
-import { Typography, Card, CardContent, Box, Alert, Button, CardProps, Stack } from "@mui/material";
-import Match from "../../Match/Match";
+import { Typography, Card, CardContent, Box, Alert, Button, CardProps, Stack, Chip, Avatar, Link } from "@mui/material";
 import { useContext, useEffect, useRef } from "react";
-import Loading from "../../../layout/Loading";
 import { Link as RouterLink } from "react-router-dom";
 import { TournamentsContext } from "../../../state/Tournaments/context";
 import React from "react";
 import { format } from "date-fns";
 import { ca } from "date-fns/locale";
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 const toTitleCase = (title: string) => title.charAt(0).toUpperCase() + title.substring(1).toLowerCase()
 
@@ -20,25 +19,11 @@ const ItemCard = React.forwardRef<any, CardProps>(({ children, ...props }, ref) 
 
 export default function Item({ tournamentId }: { tournamentId: string }) {
   const ref = useRef<HTMLDivElement>();
-  const { loadMatches, state } = useContext(TournamentsContext)
+  const { state, loadDates } = useContext(TournamentsContext)
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          loadMatches(tournamentId)
-          observer.disconnect();
-        }
-      },
-      { rootMargin: '-100px' }
-    );
-
-    if (ref.current) {
-      observer.observe(ref.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
+    loadDates(tournamentId)
+  }, [])
 
   const tournamentState = state.tournaments.find(({ tournament }) => tournament.id === tournamentId)
   if (!tournamentState) return (
@@ -47,76 +32,50 @@ export default function Item({ tournamentId }: { tournamentId: string }) {
     </ItemCard>
   )
 
-  const { matches, loading, loaded, error } = tournamentState.matchesState
   const { tournament } = tournamentState
 
-  const nextMatches = matches
-    .filter(({match}) => match.homeTeam || match.awayTeam)
-    .filter(({match}) => match.date && match.date > new Date())
-    .slice(0, 3)
-
-  const emptyMatches = (
-    <>
-      <Typography fontSize={60} textAlign={'center'} mt={2}>📋</Typography>
-      <Typography textAlign="center" mb={2}>No hi ha partits definits per aquesta competició.</Typography>
-    </>
-  )
-
-  const nextMatchesList = (
-    <>
-      <Typography py={2} fontWeight='bold' textAlign='left' sx={{
-        display: 'block',
-        lineHeight: 1,
-        borderTop: 1
-      }}>Propers partits:</Typography>
-
-      {
-        nextMatches.map(({match}, i) => {
-          const bb = i === nextMatches.length -1 ? 0 : 1
-          const mb = i === nextMatches.length -1 ? 0 : 2
-          const mt = i === 0 ? 0 : 2
-
-          return <Box key={match.id} borderBottom={bb} mb={mb} mt={mt} py={2} borderColor={'grey.500'}>
-            <Match match={match} />
-          </Box>
-        })
-      }
-    </>
-  )
-
   const dateTitle = () => {
-    const matchesWithDate = matches.map(({match}) => match).filter(match => match.date)
-    const firstMatchDate = matchesWithDate.length > 0 ? matchesWithDate[0].date : ''
-    const lastMatchDate = matchesWithDate.length > 1 ? matchesWithDate.at(-1)?.date : ''
+    const firstMatchDate = tournament.start
+    const lastMatchDate = tournament.end
     const firstDate = firstMatchDate ? format(firstMatchDate, `d ${[3, 7, 9].includes(firstMatchDate.getMonth()) ? `'d\'\''` : `'de '`}MMMM`, { locale: ca }) : ''
-    const lastDate = lastMatchDate ? format(lastMatchDate, `d ${[3, 7, 9].includes(lastMatchDate.getMonth()) ? `'d\'\''` : `'de '`}MMMM`, { locale: ca }) : ''      
+    const lastDate = lastMatchDate ? format(lastMatchDate, `d ${[3, 7, 9].includes(lastMatchDate.getMonth()) ? `'d\'\''` : `'de '`}MMMM`, { locale: ca }) : ''
     return (firstDate && lastDate) ? `Del ${firstDate} al ${lastDate}` : (firstDate || lastDate)
   }
 
+  const statuses: Record<string, { label: string, color: 'default' | 'success' | 'warning' | 'error' }> = {
+    setting_up: { label: 'En preparació', color: 'default' },
+    in_progress: { label: 'En curs', color: 'success' },
+    finished: { label: 'Finalitzat', color: 'warning' },
+    canceled: { label: 'Cancel·lat', color: 'error' }
+  }
+
+  const { label, color } = statuses[tournament.status]
+
   return (
-    <ItemCard sx={{ height: loaded ? 'none' : '500px' }} ref={ref as React.RefObject<HTMLDivElement>}>
-      <Stack flexDirection={'row'} pb={2} alignItems={'center'}>
-        <Box>
-          <Typography variant="h6" lineHeight={1} pr={1} >
+    <ItemCard ref={ref as React.RefObject<HTMLDivElement>}>
+      <Stack>
+        <Box mb={2}>
+          <Stack direction={'row'} justifyContent={'space-between'}>
+            <Chip label={label} color={color} variant="outlined" size="small" />
+            <Link display={'flex'} flexDirection={'row'} underline="none" component={RouterLink} to={`/${tournamentId}`}>Detalls <ChevronRightIcon /></Link>
+          </Stack>
+
+
+          <Typography variant="h6" lineHeight={1} mt={2} mb={1} >
             {toTitleCase(tournament.name)}
           </Typography>
 
-          <Typography mt={1} >
-            {tournament.category}
+          <Typography color="text.secondary" fontSize={14} mb={2}>
+            {dateTitle()}
           </Typography>
 
-          <Typography  color="text.secondary" fontSize={14}>
-            { matches ? dateTitle() : ''}
-          </Typography>
-        </Box>
-        <Box display={'flex'} flexGrow={1} justifyContent={'center'}>
-          <Button variant={'contained'} component={RouterLink} to={`/${tournamentId}`}>Detalls</Button>
+
+          {tournament.teams.map(team => (
+            <img key={team.id} src={team.image} alt={team.name} title={team.name} style={{ width: 48, margin: '4px' }} loading="lazy" />))}
+
+
         </Box>
       </Stack>
-
-      {error && <Alert severity="error">{error}</Alert>}
-      {loading && <Loading />}
-      {loaded ? (nextMatches.length === 0 ? emptyMatches : nextMatchesList) : <></>}
 
     </ItemCard>
   )

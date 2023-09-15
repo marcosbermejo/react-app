@@ -34,6 +34,8 @@ type Action =
   { type: 'SET_TOURNAMENTS_LOADING' } |
   { type: 'SET_TOURNAMENTS_ERROR', error: string } |
   { type: 'SET_TOURNAMENTS', tournaments: Tournament[] } |
+  { type: 'SET_TOURNAMENT_DATES', tournamentId: string, start?: Date, end?: Date } |
+  
   { type: 'SET_MATCHES_LOADING', tournamentId: string } |
   { type: 'SET_MATCHES_ERROR', tournamentId: string, error: string } |
   { type: 'SET_MATCHES', tournamentId: string, matches: Match[] } |
@@ -60,6 +62,15 @@ const setTournaments = (tournaments: Tournament[]): State => {
   }))
 
   return { loaded: true, loading: false, error: '', tournaments: tournamentsState }
+}
+
+const updateTournamentData = (state: State, tournamentId: string, data: Partial<Tournament>): State => {
+  const tournaments = state.tournaments.map((tournamentState): TournamentState => (
+    tournamentState.tournament.id === tournamentId
+      ? { ...tournamentState, tournament: {...tournamentState.tournament, ...data} }
+      : tournamentState
+  ))
+  return { ...state, tournaments }
 }
 
 const updateTournamentState = (state: State, tournamentId: string, data: Partial<TournamentState>): State => {
@@ -100,6 +111,12 @@ export default function reducer(state: State, action: Action): State {
 
     case 'SET_TOURNAMENTS':
       return setTournaments(action.tournaments)
+
+    case 'SET_TOURNAMENT_DATES':
+      return updateTournamentData(state, action.tournamentId, {
+        start: action.start,
+        end: action.end
+      })
 
     case 'SET_GROUPS_LOADING':
       return updateTournamentState(state, action.tournamentId, {
