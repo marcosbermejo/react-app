@@ -1,13 +1,15 @@
 import { createContext } from "react";
-import { State } from "./reducer";
+import { TournamentsState } from "./reducer";
 
 interface IContext {
-  state: State,
+  state: TournamentsState,
   loadTournaments: () => void,
   loadDates: (tournamentId: string) => void
   loadMatches: (tournamentId: string) => void
   loadGroups: (tournamentId: string) => void
-  loadMatch: (tournamentId: string, matchId: string) => void
+  loadScorings: (tournamentId: string, matchId: string) => void
+  loadReferees: (tournamentId: string, matchId: string) => void
+  loadStandings: (tournamentId: string, groupId: string) => void
 }
 
 export const TournamentsContext = createContext<IContext>({
@@ -21,5 +23,7 @@ export const TournamentsContext = createContext<IContext>({
   loadDates: () => {},
   loadMatches: () => {},
   loadGroups: () => {},
-  loadMatch: () => {},
+  loadScorings: () => {},
+  loadReferees: () => {},
+  loadStandings: () => {},
 });

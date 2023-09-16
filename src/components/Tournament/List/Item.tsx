@@ -1,4 +1,4 @@
-import { Typography, Card, CardContent, Box, Alert, Button, CardProps, Stack, Chip, Avatar, Link } from "@mui/material";
+import { Typography, Card, CardContent, Box, Alert, CardProps, Stack, Chip, Link } from "@mui/material";
 import { useContext, useEffect, useRef } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { TournamentsContext } from "../../../state/Tournaments/context";

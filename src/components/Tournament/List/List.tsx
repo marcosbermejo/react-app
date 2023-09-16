@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { TournamentsContext } from "../../../state/Tournaments/context";
-import { Alert, Box, Card, CardContent, Stack, Typography } from "@mui/material";
+import { Alert, Box, Stack } from "@mui/material";
 import Loading from "../../../layout/Loading";
 import Filter from "./Filter";
 import Item from "./Item";

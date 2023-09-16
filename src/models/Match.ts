@@ -1,7 +1,7 @@
-import { LiveScoringResponse } from "../services/ApiResponse";
 import Period from "./Period";
-import Player from "./Profile";
+import Profile from "./Profile";
 import Round from "./Round";
+import Scoring from "./Scoring";
 import Team from "./Team";
 
 export default interface Match {
@@ -19,6 +19,6 @@ export default interface Match {
   round?: Round;
   periods: Period[];
   faceoffId?: string;
-  scoring: LiveScoringResponse[],
-  referees: Player[]
+  scoring: Scoring[],
+  referees: Profile[]
 }

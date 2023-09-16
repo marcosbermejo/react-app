@@ -8,6 +8,8 @@ import Group from "../models/Group";
 import GroupsMapper from "../mappers/GroupsMapper";
 import Standing from "../models/Standing";
 import StandingsMapper from "../mappers/StandingsMapper";
+import Profile from "../models/Profile";
+import Scoring from "../models/Scoring";
 
 const baseURL = process.env.REACT_APP_API_URL
 const scrURL = process.env.REACT_APP_SCR_URL
@@ -46,7 +48,22 @@ export const fetchMatches = async (tournamentId: string): Promise<Match[]> => {
   const url = `${baseURL}/matches?filter=${filter}&sort=datetime&include=${include}&page[size]=100`
   const { data } = await axios.get<ApiListResponse>(url)
   const mapper = new MatchesMapper(data)
-  return mapper.mapMatches()
+  const matches = mapper.mapMatches()
+  return matches.map((match): Match => ({ ...match, tournamentId }))
+}
+
+export const fetchReferees = async (matchId: string): Promise<Profile[]> => {
+  const include = 'matchreferees.license.profile'
+  const url = `${baseURL}/matches?filter=id:${matchId}&include=${include}`
+  const { data } = await axios.get<ApiListResponse>(url)
+
+  const mapper = new MatchesMapper(data)
+  return mapper.mapMatchReferees()
+}
+
+export const fetchScorings = async (tournamentId: string, matchId: string): Promise<Scoring[]> => {
+  const { data } = await axios.get<LiveScoringResponse[]>(`${scrURL}/tournament/${tournamentId}/match/${matchId}`)
+  return data as Scoring[]
 }
 
 export const fetchGroups = async (tournamentId: string): Promise<Group[]> => {
@@ -72,22 +89,4 @@ export const fetchStandings = async (groupId: string): Promise<Standing[]> => {
   return mapper.mapStandings()
 }
 
-export const fetchTeam = async (teamId: string) => {
-}
-
-export const fetchMatch = async (tournamentId: string, matchId: string): Promise<Match | undefined> => {
-  const include = 'teams,round,facility,results,periods,matchreferees.license.profile,periods.results'
-
-  const url = `${baseURL}/matches?filter=id:${matchId}&include=${include}`
-  const { data } = await axios.get<ApiListResponse>(url)
-
-  const mapper = new MatchesMapper(data)
-  const match = mapper.mapMatches()[0]
-
-  const { data: scoring } = await axios.get<LiveScoringResponse[]>(`${scrURL}/tournament/${tournamentId}/match/${matchId}`)
-
-  match.scoring = scoring
-
-  return match
-}
 

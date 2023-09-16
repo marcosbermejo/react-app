@@ -36,12 +36,14 @@ export default class MatchesMapper {
       periods: relationships.periods?.data ? this.findPeriods(relationships.periods.data, id, meta.home_team, meta.away_team) : [],
       faceoffId: relationships.faceoff?.data?.id,
       scoring: [],
-      referees: this.findReferees()
+      referees: []
     }))
   }
 
-
-  private findReferees(): Profile[] {
+  /**
+   * Maps from API response to Referees list
+   */
+  public mapMatchReferees(): Profile[] {
     return this.included.filter( entity => entity.type === 'profile').map(({id, attributes, links}):Profile => ({
       id,
       name: (attributes.first_name + ' ' + attributes.last_name).toLowerCase(),
