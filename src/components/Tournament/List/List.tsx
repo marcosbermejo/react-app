@@ -29,6 +29,7 @@ export default function List() {
   if (error) return <Alert severity="error">{error}</Alert>
   if (loading) return <Loading />
   if (!loaded) return <></>
+  if (!selectedCategory) return <></>
 
   const selectedTournaments = selectedCategory
     ? tournamentStates.filter(({ tournament }) => tournament.category === selectedCategory)
