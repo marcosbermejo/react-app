@@ -6,11 +6,11 @@ import Filter from "./Filter";
 import Item from "./Item";
 
 export default function List() {
-  const { loadTournaments, state: { tournaments, error, loading, loaded } } = useContext(TournamentsContext)
+  const { loadTournaments, tournamentsState: { tournamentStates, error, loading, loaded } } = useContext(TournamentsContext)
   const [selectedCategory, setSelectedCategory] = useState('');
 
   const categories = Array
-    .from(new Set(tournaments.map(({ tournament }) => tournament.category)))
+    .from(new Set(tournamentStates.map(({ tournament }) => tournament.category)))
     .sort((a, b) => a.localeCompare(b))
 
   useEffect(() => {
@@ -31,7 +31,7 @@ export default function List() {
   if (!loaded) return <></>
 
   const selectedTournaments = selectedCategory
-    ? tournaments.filter(({ tournament }) => tournament.category === selectedCategory)
+    ? tournamentStates.filter(({ tournament }) => tournament.category === selectedCategory)
     : []
 
   return (
@@ -46,7 +46,7 @@ export default function List() {
 
       <Stack spacing={2} pb={2}>
         {
-          selectedTournaments.map(({ tournament }) => <Item key={tournament.id} tournamentId={tournament.id} />)  
+          selectedTournaments.map(({ tournament }) => <Item key={tournament.id} tournament={tournament} />)
         }
       </Stack>
     </>

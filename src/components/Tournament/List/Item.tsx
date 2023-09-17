@@ -7,33 +7,17 @@ import { format } from "date-fns";
 import { ca } from "date-fns/locale";
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import Team from "../../../models/Team";
+import Tournament from "../../../models/Tournament";
+import Status from "./Status";
 
-const toTitleCase = (title: string) => title.charAt(0).toUpperCase() + title.substring(1).toLowerCase()
-
-const ItemCard = React.forwardRef<any, CardProps>(({ children, ...props }, ref) => (
-  <Card {...props} variant="outlined" ref={ref as React.RefObject<HTMLDivElement>}>
-    <CardContent sx={{ pb: 0, height: '100%' }}>
-      {children}
-    </CardContent>
-  </Card>
-))
-
-export default function Item({ tournamentId }: { tournamentId: string }) {
-  const ref = useRef<HTMLDivElement>();
-  const { state, loadDates } = useContext(TournamentsContext)
+export default function Item({ tournament }: { tournament: Tournament }) {
+  const { loadDates } = useContext(TournamentsContext)
 
   useEffect(() => {
-    loadDates(tournamentId)
+    loadDates(tournament.id)
   }, [])
 
-  const tournamentState = state.tournaments.find(({ tournament }) => tournament.id === tournamentId)
-  if (!tournamentState) return (
-    <ItemCard>
-      <Alert severity="error">El Tournament amb id {tournamentId} no existeix.</Alert>
-    </ItemCard>
-  )
-
-  const { tournament } = tournamentState
+  const title = tournament.name.charAt(0).toUpperCase() + tournament.name.substring(1).toLowerCase()
 
   const dateTitle = () => {
     const firstMatchDate = tournament.start
@@ -43,47 +27,33 @@ export default function Item({ tournamentId }: { tournamentId: string }) {
     return (firstDate && lastDate) ? `Del ${firstDate} al ${lastDate}` : (firstDate || lastDate)
   }
 
-  const statuses: Record<string, { label: string, color: 'default' | 'success' | 'warning' | 'error' }> = {
-    setting_up: { label: 'En preparació', color: 'default' },
-    in_progress: { label: 'En curs', color: 'success' },
-    finished: { label: 'Finalitzat', color: 'warning' },
-    canceled: { label: 'Cancel·lat', color: 'error' }
-  }
-
-  const { label, color } = statuses[tournament.status]
-
-  const logos: Record<string, Team> = tournament.teams.reduce((prev, curr) => ({...prev, [curr.image]: curr}), {})
+  const logos: Record<string, Team> = tournament.teams.reduce((prev, curr) => ({ ...prev, [curr.image]: curr }), {})
 
   return (
-    <ItemCard ref={ref as React.RefObject<HTMLDivElement>}>
-      <Stack>
-        <Box mb={2}>
-          <Stack direction={'row'} justifyContent={'space-between'}>
-            <Chip label={label} color={color} variant="outlined" size="small" />
-            <Link display={'flex'} flexDirection={'row'} underline="none" component={RouterLink} to={`/${tournamentId}`}>Detalls <ChevronRightIcon /></Link>
-          </Stack>
+    <Card>
+      <CardContent sx={{ pb: 0 }}>
+        <Stack>
+          <Box mb={2}>
+            <Stack direction={'row'} justifyContent={'space-between'}>
+              <Status tournament={tournament} />
+              <Link display={'flex'} flexDirection={'row'} underline="none" component={RouterLink} to={`/${tournament.id}`}>Detalls <ChevronRightIcon /></Link>
+            </Stack>
 
+            <Typography variant="h6" lineHeight={1} mt={2} mb={1} >
+              {title}
+            </Typography>
 
-          <Typography variant="h6" lineHeight={1} mt={2} mb={1} >
-            {toTitleCase(tournament.name)}
-          </Typography>
-
-          <Typography color="text.secondary" fontSize={14} mb={2}>
-            {dateTitle()}
-          </Typography>
-
-
-
-          {
-            Object.entries(logos).map(([image, team]) => (
-              <img key={team.id} src={image} alt={team.name} title={team.name} style={{ width: '17%', margin: '4px' }} loading="lazy" />
-            ))
-          }
-
-
-        </Box>
-      </Stack>
-
-    </ItemCard>
+            <Typography color="text.secondary" fontSize={14} mb={2}>
+              {dateTitle()}
+            </Typography>
+            {
+              Object.entries(logos).map(([image, team]) => (
+                <img key={team.id} src={image} alt={team.name} title={team.name} style={{ width: '17%', margin: '4px' }} loading="lazy" />
+              ))
+            }
+          </Box>
+        </Stack>
+      </CardContent>
+    </Card>
   )
 }

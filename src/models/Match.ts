@@ -1,7 +1,5 @@
 import Period from "./Period";
-import Profile from "./Profile";
 import Round from "./Round";
-import Scoring from "./Scoring";
 import Team from "./Team";
 
 export default interface Match {
@@ -19,6 +17,4 @@ export default interface Match {
   round?: Round;
   periods: Period[];
   faceoffId?: string;
-  scoring: Scoring[],
-  referees: Profile[]
 }

@@ -1,8 +1,47 @@
-import { Box, Paper, Stack, Typography } from "@mui/material";
+import { Alert, Box, Paper, Stack, Typography } from "@mui/material";
 import { LiveScoringResponse } from "../../services/ApiResponse";
 import SportsVolleyballOutlinedIcon from '@mui/icons-material/SportsVolleyballOutlined';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
-import { CSSProperties } from "react";
+import { CSSProperties, useContext, useEffect } from "react";
+import { TournamentsContext } from "../../state/Tournaments/context";
+import Loading from "../../layout/Loading";
+
+
+export default function Scoring({ tournamentId, matchId }: {tournamentId: string, matchId: string}) {
+  const { loadScorings, scoringsState } = useContext(TournamentsContext)
+
+  useEffect(() => {
+    loadScorings(matchId, tournamentId)
+  }, [])
+
+  const { resources: scorings, error, loading } = scoringsState[matchId] ?? {}
+
+  if (error) return <Alert severity="error">{error}</Alert>
+  if (loading) return <Loading />
+  if (!scorings) return <></>
+
+  return (
+    <Stack>
+      {
+        scorings.map((score, i) => (
+          <Stack key={i} direction={'row'} position='relative'>
+            <Box width={'50%'} borderRight={1} px={2} py={4}>
+              {score.team === 'first' && <Item score={score} align="right"></Item>}
+            </Box>
+
+            {
+              <Icon text={score.text} />
+            }
+
+            <Box width={'50%'} px={2} py={4}>
+              {score.team === 'second' && <Item score={score} align="left"></Item>}
+            </Box>
+          </Stack>
+        ))
+      }
+    </Stack>
+  )
+}
 
 function Item({ score, align }: { score: LiveScoringResponse, align: 'right' | 'left' }) {
 
@@ -33,28 +72,4 @@ function Icon({ text }: { text: string }) {
   }
 
   return text.toLowerCase() === 'gol' ? <SportsVolleyballOutlinedIcon style={style} /> : <ErrorOutlineOutlinedIcon style={style} />
-}
-
-export default function Scoring({ scoring }: { scoring: LiveScoringResponse[] }) {
-  return (
-    <Stack>
-      {
-        scoring.map((score, i) => (
-          <Stack key={i} direction={'row'} position='relative'>
-            <Box width={'50%'} borderRight={1} px={2} py={4}>
-              {score.team === 'first' && <Item score={score} align="right"></Item>}
-            </Box>
-
-            {
-              <Icon text={score.text} />
-            }
-
-            <Box width={'50%'} px={2} py={4}>
-              {score.team === 'second' && <Item score={score} align="left"></Item>}
-            </Box>
-          </Stack>
-        ))
-      }
-    </Stack>
-  )
 }

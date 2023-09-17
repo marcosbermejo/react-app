@@ -1,7 +1,21 @@
-import { Paper, Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
-import Standing from "../../../models/Standing";
+import { Alert, Paper, Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
+import { useContext, useEffect } from "react";
+import { TournamentsContext } from "../../state/Tournaments/context";
+import Loading from "../../layout/Loading";
 
-export default function Standings({ standings }: { standings: Standing[] }) {
+export default function Standings({ tournamentId, groupId }: { tournamentId: string, groupId: string }) {
+  const { loadStandings, standingsState } = useContext(TournamentsContext)
+
+  const { resources: standings, error, loading } = standingsState[groupId] ?? {}
+
+  useEffect(() => {
+    loadStandings(groupId)
+  }, [groupId])
+
+  if (error) return <Alert severity="error">{error}</Alert>
+  if (loading) return <Loading />
+  if (!standings) return <></>
+  
   return (
     <Paper>
       <Table size="small">

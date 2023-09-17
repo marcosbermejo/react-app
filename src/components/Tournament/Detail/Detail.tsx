@@ -1,40 +1,19 @@
 import { useContext, useEffect, useState } from "react"
 import { TournamentsContext } from "../../../state/Tournaments/context"
-import { Alert, Box, Paper, Stack, Tab, Tabs } from "@mui/material"
+import { Alert } from "@mui/material"
 import Loading from "../../../layout/Loading"
-import Match from "../../Match/Match"
-import Filter from "./Filter"
-import Standings from "./Standings"
-import Brackets from "./Brackets"
+import GroupDetail from "../../Group/Detail"
+import Filter from "../../Group/Filter"
 
 export default function Detail({ tournamentId }: { tournamentId: string }) {
   const [selectedGroupId, setSelectedGroupId] = useState('');
-  const [selectedTab, setSelectedTab] = useState(0);
+  const { loadGroups, groupsState } = useContext(TournamentsContext)
 
-  const { loadTournaments, loadMatches, loadGroups, state } = useContext(TournamentsContext)
-
-  const tournamentState = state.tournaments.find(({ tournament }) => tournament.id === tournamentId)
-  const groupsState = tournamentState?.groupsState
-  const matchesState = tournamentState?.matchesState
-
-  const tournament = tournamentState?.tournament
-  const groups = groupsState?.groups
-
-  const onChangeGroup = (groupId: string) => {
-    setSelectedGroupId(groupId)
-    localStorage.setItem(`tournament.${tournamentId}.selectedGroupId`, groupId)
-  }
+  const { resources: groups, error, loading } = groupsState[tournamentId] ?? {}
 
   useEffect(() => {
-    loadTournaments()
+    loadGroups(tournamentId)
   }, [])
-
-  useEffect(() => {
-    if (tournament) {
-      loadMatches(tournament.id)
-      loadGroups(tournament.id)
-    }
-  }, [tournament])
 
   useEffect(() => {
     if (groups && groups.length > 0) {
@@ -42,56 +21,24 @@ export default function Detail({ tournamentId }: { tournamentId: string }) {
     }
   }, [groups])
 
-  if (state.error) return <Alert severity="error">{state.error}</Alert>
-  if (state.loading) return <Loading />
-  if (!state.loaded) return <></>
+  if (error) return <Alert severity="error">{error}</Alert>
+  if (loading) return <Loading />
+  if (!groups) return <></>
 
-  if (!tournamentState) return (
-    <Alert severity="error">El Tournament amb id {tournamentId} no existeix.</Alert>
-  )
+  if (groups.length === 0) return <Alert severity="warning">No hi ha grups definits per a aquesta competició</Alert>
 
-  const matchesList = matchesState && matchesState.loaded
-    ? matchesState.matches
-      .filter(({ match }) => match.round?.groupId == selectedGroupId)
-      .filter(({ match }) => match.date)
-      .map(({ match }, i) => (
-        <Paper key={match.id}>
-          <Match match={match} />
-        </Paper>
-      ))
-    : <></>
+  const onChange = (groupId: string) => {
+    setSelectedGroupId(groupId)
+    localStorage.setItem(`tournament.${tournamentId}.selectedGroupId`, groupId)
+  }
 
-  const group = groupsState?.groups.find(({ id }) => id === selectedGroupId)
-
-  const ranking = group && (group.type === 'play_off' ? <Brackets rounds={group.rounds} matches={matchesState?.matches.map(({ match }) => match)} /> : <Standings standings={group.standings} />)
+  const group = groups.find(({id}) => id === selectedGroupId)
+  if (!group) return <></>
 
   return (
     <>
-      <Box sx={{ px: 2, pt: 2 }}>
-        {
-          groupsState && groupsState.loaded && <Filter groups={groupsState.groups} selected={selectedGroupId} onChange={onChangeGroup} />
-        }
-      </Box>
-
-
-      {
-        groupsState && groupsState.loaded && groupsState.groups.length === 0
-          ? <Alert severity="warning">No hi ha grups definits per a aquesta competició</Alert>
-          : <>
-            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-              <Tabs value={selectedTab} onChange={(e, v) => setSelectedTab(v)}>
-                <Tab label="Partits" value={0} />
-                <Tab label="Ranking" value={1} />
-              </Tabs>
-            </Box>
-
-
-            {selectedTab === 0 ? <Stack spacing={2} flexGrow={1}>{matchesList}</Stack> : ranking}
-
-          </>
-      }
-
-
+      <Filter groups={groups} selectedGroupId={selectedGroupId} onChange={onChange} />
+      { group && <GroupDetail tournamentId={tournamentId} group={group} /> }
     </>
   )
 }

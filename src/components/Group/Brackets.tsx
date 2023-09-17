@@ -1,19 +1,33 @@
-import { Box, Grid, Paper, Stack, Typography } from "@mui/material";
-import Round from "../../../models/Round";
-import Team from "../../Team/Team";
-import Match from "../../../models/Match";
-import Faceoff from "../../../models/Faceoff";
-import FaceOff from "../../Match/FaceOff";
+import { Alert, Box, Paper, Stack } from "@mui/material";
+import FaceOff from "../Match/FaceOff";
+import { useContext, useEffect } from "react";
+import { TournamentsContext } from "../../state/Tournaments/context";
+import Loading from "../../layout/Loading";
 
-export default function Brackets({ rounds, matches }: { rounds: Round[], matches?: Match[] }) {
+export default function Brackets({ tournamentId, groupId }: { tournamentId: string, groupId: string }) {
+  const { loadMatches, loadGroups, matchesState, groupsState } = useContext(TournamentsContext)
 
-  const sortedRounds = rounds.sort((a, b) => {
+  useEffect(() => {
+    loadMatches(tournamentId)
+    loadGroups(tournamentId)
+  }, [])
+
+  const { resources: matches, error: matchesError, loading: matchesLoading } = matchesState[tournamentId] ?? {}
+  const { resources: groups, error: groupsError, loading: groupsLoading } = groupsState[tournamentId] ?? {}
+
+  if (matchesError || groupsError) return <Alert severity="error">{matchesError || groupsError}</Alert>
+  if (matchesLoading || groupsLoading) return <Loading />
+  if (!matches || !groups) return <></>
+
+  const group = groups.find(({id}) => id === groupId)
+  if (!group) return <></>
+
+  const sortedRounds = group.rounds.sort((a, b) => {
     if (a.faceoffs.length === b.faceoffs.length) {
       return a.faceoffs[0]?.firstPreviousFaceoffId ? -1 : 0
     }
     return b.faceoffs.length - a.faceoffs.length
   })
-
 
   return (
     <Stack sx={{ userSelect: 'none' }}>
@@ -27,7 +41,7 @@ export default function Brackets({ rounds, matches }: { rounds: Round[], matches
                     <FaceOff
                       faceoff={faceoff}
                       name={`${round.name}${ round.faceoffs.length > 1 ? ` ${i+1}` : ''}`}
-                      matches={matches?.filter(match => match.faceoffId === faceoff.id)}
+                      matches={matches.filter(match => match.faceoffId === faceoff.id)}
                     />
                   </Paper>
                 ))

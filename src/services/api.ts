@@ -72,13 +72,7 @@ export const fetchGroups = async (tournamentId: string): Promise<Group[]> => {
   const { data } = await axios.get<ApiListResponse>(url)
 
   const mapper = new GroupsMapper(data)
-  const groups = mapper.mapGroups()
-  
-  for (const group of groups) {
-    group.standings = await fetchStandings(group.id)
-  }
-
-  return groups
+  return mapper.mapGroups()
 }
 
 export const fetchStandings = async (groupId: string): Promise<Standing[]> => {
