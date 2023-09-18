@@ -3,7 +3,7 @@ import { Link, Grid, Stack, Typography, Chip } from "@mui/material";
 import IMatch from "../../models/Match";
 import { format } from "date-fns";
 import { ca } from 'date-fns/locale'
-import Team from "../Team/Team";
+import Team from "../Team/Item";
 import { Link as RouterLink } from "react-router-dom";
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';

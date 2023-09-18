@@ -33,9 +33,9 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <ThemeProvider theme={theme}>
-  <CssBaseline />
+    <CssBaseline />
     <App />
-    </ThemeProvider>
+  </ThemeProvider>
 );
 
 // If you want to start measuring performance in your app, pass a function

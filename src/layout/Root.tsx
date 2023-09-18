@@ -1,4 +1,4 @@
-import { Container, Box, Stack } from '@mui/material';
+import { Container, Stack } from '@mui/material';
 import { Outlet } from 'react-router-dom'
 import Header from './Header';
 import Navigation from './Navigation';

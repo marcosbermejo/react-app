@@ -127,3 +127,8 @@ export type LiveScoringResponse = {
   player: string;
   text: string;
 }
+
+export type ClubsResponse = {
+  label: string,
+  value: string
+}[]

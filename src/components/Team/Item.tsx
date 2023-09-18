@@ -9,7 +9,7 @@ type TeamProps = {
   defaultText?: string
 }
 
-export default function Team({ team, direction = 'column', size = 80, fontSize = 12, defaultText }: TeamProps) {
+export default function Item({ team, direction = 'column', size = 80, fontSize = 12, defaultText }: TeamProps) {
   return (
     <Stack alignItems="center" flexDirection={direction} useFlexGap={true} spacing={1}>
       <Paper elevation={3}>

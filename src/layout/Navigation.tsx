@@ -11,7 +11,7 @@ export default function Navigation() {
   const [value, setValue] = useState('');
 
   useEffect(() => {
-    const isTournamentsPath = (path: string) => !['/teams', '/news'].includes(path)
+    const isTournamentsPath = (path: string) => !['/clubs', '/news'].includes(path)
     setValue(isTournamentsPath(location.pathname) ? '/' : location.pathname);
   }, [location])
   
@@ -25,7 +25,7 @@ export default function Navigation() {
           setValue(newValue);
         }}
       >
-        <BottomNavigationAction value="/teams" component={RouterLink} to="/teams" label="Equips" icon={<SportsVolleyballIcon />} />
+        <BottomNavigationAction value="/clubs" component={RouterLink} to="/clubs" label="Clubs" icon={<SportsVolleyballIcon />} />
         <BottomNavigationAction value="/" component={RouterLink} to="/" label="Competicions" icon={<EmojiEventsIcon />} />
         <BottomNavigationAction value="/news" component={RouterLink} to="/news" label="Notícies" icon={<FeedIcon />} />
       </BottomNavigation>

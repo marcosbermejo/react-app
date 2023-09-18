@@ -1,7 +1,7 @@
 import { Box, Stack, Typography } from "@mui/material";
 
 import IMatch from "../../models/Match";
-import Team from "../Team/Team";
+import Team from "../Team/Item";
 import Faceoff from "../../models/Faceoff";
 import { format } from "date-fns";
 import { ca } from "date-fns/locale";

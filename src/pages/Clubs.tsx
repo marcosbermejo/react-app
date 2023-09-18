@@ -1,19 +1,16 @@
 import { useContext, useEffect } from "react"
 import { HeaderContext } from "../state/Header/context"
-import { Alert } from "@mui/material"
+import List from "../components/Club/List"
+import ClubsProvider from "../state/Clubs/context"
 
 export default function Teams () {
   const { updateTitle } = useContext(HeaderContext)
 
   useEffect(() => {
-    updateTitle('Equips')
+    updateTitle('Clubs')
   }, [])
 
-  return (
-    <>
-      <Alert severity="warning">Pàgina en construcció</Alert>
-    </>
-  )
+  return (<ClubsProvider><List /></ClubsProvider>)
 
 
 }

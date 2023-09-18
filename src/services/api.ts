@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ApiListResponse, ApiStandingsResponse, LiveScoringResponse } from "./ApiResponse";
+import { ApiListResponse, ApiStandingsResponse, ClubsResponse, LiveScoringResponse } from "./ApiResponse";
 import TournamentMapper from "../mappers/TournamentsMapper";
 import Tournament from "../models/Tournament";
 import MatchesMapper from "../mappers/MatchesMapper";
@@ -10,6 +10,8 @@ import Standing from "../models/Standing";
 import StandingsMapper from "../mappers/StandingsMapper";
 import Profile from "../models/Profile";
 import Scoring from "../models/Scoring";
+import Club from "../models/Club";
+import ClubsMapper from "../mappers/ClubsMapper";
 
 const baseURL = process.env.REACT_APP_API_URL
 const scrURL = process.env.REACT_APP_SCR_URL
@@ -61,11 +63,6 @@ export const fetchReferees = async (matchId: string): Promise<Profile[]> => {
   return mapper.mapMatchReferees()
 }
 
-export const fetchScorings = async (tournamentId: string, matchId: string): Promise<Scoring[]> => {
-  const { data } = await axios.get<LiveScoringResponse[]>(`${scrURL}/tournament/${tournamentId}/match/${matchId}`)
-  return data as Scoring[]
-}
-
 export const fetchGroups = async (tournamentId: string): Promise<Group[]> => {
   const include = 'rounds,rounds.faceoffs,rounds.faceoffs.first_team,rounds.faceoffs.second_team'
   const url = `${baseURL}/groups?filter=tournament.id:${tournamentId}&sort=order&include=${include}&page[size]=100`
@@ -83,4 +80,13 @@ export const fetchStandings = async (groupId: string): Promise<Standing[]> => {
   return mapper.mapStandings()
 }
 
+export const fetchScorings = async (tournamentId: string, matchId: string): Promise<Scoring[]> => {
+  const { data } = await axios.get<LiveScoringResponse[]>(`${scrURL}/tournament/${tournamentId}/match/${matchId}`)
+  return data as Scoring[]
+}
 
+export const fetchClub = async (clubId: string): Promise<Club[]> => {
+  const { data } = await axios.get<ClubsResponse>(`${scrURL}/club/${clubId}`)
+  const mapper = new ClubsMapper(data)
+  return [mapper.mapClub(clubId)]
+}
