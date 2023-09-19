@@ -1,17 +1,17 @@
 import { Alert, Box, Paper, Stack, Typography } from "@mui/material";
-import { LiveScoringResponse } from "../../services/ApiResponse";
 import SportsVolleyballOutlinedIcon from '@mui/icons-material/SportsVolleyballOutlined';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import { CSSProperties, useContext, useEffect } from "react";
 import { TournamentsContext } from "../../state/Tournaments/context";
 import Loading from "../../layout/Loading";
+import IScoring from "../../models/Scoring";
 
 
 export default function Scoring({ tournamentId, matchId }: {tournamentId: string, matchId: string}) {
   const { loadScorings, scoringsState } = useContext(TournamentsContext)
 
   useEffect(() => {
-    loadScorings(matchId, tournamentId)
+    loadScorings(matchId, 1, tournamentId)
   }, [])
 
   const { resources: scorings, error, loading } = scoringsState[matchId] ?? {}
@@ -30,7 +30,7 @@ export default function Scoring({ tournamentId, matchId }: {tournamentId: string
             </Box>
 
             {
-              <Icon text={score.text} />
+              <Icon text={score.text ?? ''} />
             }
 
             <Box width={'50%'} px={2} py={4}>
@@ -43,7 +43,7 @@ export default function Scoring({ tournamentId, matchId }: {tournamentId: string
   )
 }
 
-function Item({ score, align }: { score: LiveScoringResponse, align: 'right' | 'left' }) {
+function Item({ score, align }: { score: IScoring, align: 'right' | 'left' }) {
 
   const pl = align === 'right' ? 1 : 0
   const pr = align === 'right' ? 0 : 1

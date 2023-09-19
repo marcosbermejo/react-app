@@ -9,7 +9,7 @@ import { format } from "date-fns"
 import { ca } from "date-fns/locale"
 import Referees from "./Referees"
 
-export default function Detail({ tournamentId, match }: { tournamentId: string, match: IMatch }) {
+export default function Detail({ tournamentId, groupId, match }: { tournamentId: string, groupId: string, match: IMatch }) {
   
   const { loadTournaments, tournamentsState } = useContext(TournamentsContext)
 
@@ -30,7 +30,7 @@ export default function Detail({ tournamentId, match }: { tournamentId: string, 
         </Box>
 
         <Box px={1}>
-          <Match match={match} hideLink={true} />
+          <Match tournamentId={tournamentId} groupId={groupId} match={match} hideLink={true} />
         </Box>
 
         <Stack px={2}>
@@ -51,7 +51,7 @@ export default function Detail({ tournamentId, match }: { tournamentId: string, 
           <Paper sx={{ py: 2 }}>
             <Typography fontSize={18} textAlign={'center'} fontWeight={'bold'}>Minut a minut</Typography>
           </Paper>
-          <Scoring tournamentId={match.tournamentId} matchId={match.id} />
+          <Scoring tournamentId={tournamentId} matchId={match.id} />
         </Stack>
 
 

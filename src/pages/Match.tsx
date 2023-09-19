@@ -7,20 +7,20 @@ import { Alert } from "@mui/material";
 import Loading from "../layout/Loading";
 
 export default function Match () {
-  const { tournamentId, matchId } = useParams()
+  const { tournamentId, groupId, matchId } = useParams()
   const { updateTitle } = useContext(HeaderContext)
-  const { loadMatches, matchesState } = useContext(TournamentsContext)
+  const { loadMatch, matchesState } = useContext(TournamentsContext)
 
   useEffect(() => {
     updateTitle('Partit')
-    if (tournamentId) {
-      loadMatches(tournamentId)
+    if (matchId && groupId) {
+      loadMatch(groupId, matchId)
     }
-  }, [tournamentId])
+  }, [matchId, groupId])
 
-  if (!tournamentId || !matchId) return <></>
+  if (!tournamentId || !matchId || !groupId) return <></>
 
-  const { resources: matches, error, loading } = matchesState[tournamentId] ?? {}
+  const { resources: matches, error, loading } = matchesState[groupId] ?? {}
 
   if (error) return <Alert severity="error">{error}</Alert>
   if (loading) return <Loading />
@@ -29,5 +29,5 @@ export default function Match () {
   const match = matches.find(match => match.id === matchId)
   if (!match) return <></>
 
-  return <Detail tournamentId={tournamentId} match={match}/>
+  return <Detail tournamentId={tournamentId} groupId={groupId} match={match}/>
 }

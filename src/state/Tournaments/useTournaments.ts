@@ -1,6 +1,6 @@
 import { useReducer } from "react"
 import Tournament from "../../models/Tournament"
-import { fetchFirstMatch, fetchLastMatch, fetchTournaments } from "../../services/api"
+import { TournamentsFetcher } from "../../services/api"
 
 export interface TournamentsState {
   tournamentStates: TournamentState[]
@@ -84,13 +84,14 @@ function reducer(state: TournamentsState, action: Action): TournamentsState {
 export default function useTournaments() {
   const [state, dispatch] = useReducer(reducer, { tournamentStates: [], loaded: false, loading: false, error: '' });
   const { tournamentStates, loaded, loading } = state
+  const fetcher = new TournamentsFetcher()
 
   const loadTournaments = async () => {
     if (loaded || loading) return;
 
     try {
       dispatch({ type: 'SET_TOURNAMENTS_LOADING' });
-      dispatch({ type: 'SET_TOURNAMENTS', tournaments: await fetchTournaments() });
+      dispatch({ type: 'SET_TOURNAMENTS', tournaments: await fetcher.fetchAll() });
 
     } catch (err: any) {
       console.log(err)
@@ -106,8 +107,8 @@ export default function useTournaments() {
 
     try {
       dispatch({ type: 'SET_TOURNAMENT_LOADING', tournamentId });
-      const firstMatch = (await fetchFirstMatch(tournamentId))[0]
-      const lastMatch = (await fetchLastMatch(tournamentId))[0]
+      const firstMatch = (await fetcher.fetchFirstMatch(tournamentId))[0]
+      const lastMatch = (await fetcher.fetchLastMatch(tournamentId))[0]
       dispatch({ type: 'SET_TOURNAMENT_DATES', tournamentId, start: firstMatch?.date, end: lastMatch?.date });
 
     } catch (err: any) {

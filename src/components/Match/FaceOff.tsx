@@ -4,7 +4,6 @@ import IMatch from "../../models/Match";
 import Team from "../Team/Item";
 import Faceoff from "../../models/Faceoff";
 import { format } from "date-fns";
-import { ca } from "date-fns/locale";
 
 export default function FaceOff({ name, faceoff, matches }: { name: string, faceoff: Faceoff, matches?: IMatch[] }) {
   if (!matches) return <></>
@@ -32,6 +31,8 @@ export default function FaceOff({ name, faceoff, matches }: { name: string, face
             ))
           }
         </Stack>
+
+        { matches[0].date && <Typography lineHeight={1} fontSize={14}>{ format(matches[0].date, 'dd/MM/yy') }</Typography> } 
 
         <Stack direction={'row'} justifyContent={'center'} spacing={2} mt={1}>
           {

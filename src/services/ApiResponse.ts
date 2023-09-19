@@ -20,6 +20,7 @@ export interface ApiResponseData {
     canceled: boolean,
     type: string,
     group: string,
+    gender: string,
     promote: number,
     relegate: number,
     score: number,
@@ -71,6 +72,7 @@ export interface ApiResponseData {
     first_team: { data?: ApiData},
     second_team: { data?: ApiData},
     faceoff?: { data?: ApiData},
+    delegation?: { data?: ApiData},
     first_previous_faceoff: { data?: ApiData}
     second_previous_faceoff: { data?: ApiData}
   },
@@ -85,6 +87,10 @@ export interface ApiResponseData {
 export interface ApiListResponse {
   data: ApiResponseData[];
   included: ApiResponseData[];
+  links?: {
+    next?: string,
+    prev?: string
+  }
 }
 
 export interface ApiItemResponse {

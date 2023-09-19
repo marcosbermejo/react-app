@@ -19,7 +19,7 @@ export default function GroupDetail({ tournamentId, group }: { tournamentId: str
 
       {selectedTab === 0 && <Matches tournamentId={tournamentId} groupId={group.id} />}
       {selectedTab === 1 && group.type === 'play_off' && <Brackets tournamentId={tournamentId} groupId={group.id} />}
-      {selectedTab === 1 && group.type !== 'play_off' && <Standings tournamentId={tournamentId} groupId={group.id} />}
+      {selectedTab === 1 && group.type !== 'play_off' && <Standings groupId={group.id} />}
     </>
   )
 }

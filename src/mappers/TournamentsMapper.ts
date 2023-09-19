@@ -2,6 +2,13 @@ import { ApiResponseData, ApiListResponse } from '../services/ApiResponse'
 import Tournament from '../models/Tournament'
 import Team from '../models/Team'
 import Club from '../models/Club'
+import Delegation from '../models/Delegation'
+import { clubIdTranslations } from './ClubsMapper'
+
+const categoryIdTranslations: Record<string, Record<string, string>> = {
+  female: {'2090': '4815'},
+  male: {'2090': '4814'},
+}
 
 export default class TournamentsMapper {
 
@@ -22,7 +29,7 @@ export default class TournamentsMapper {
       status: attributes.status,
       order: attributes.order,
       name: attributes.name,
-      category: this.findCategory(relationships.category?.data?.id),
+      category: this.findCategory(attributes.gender, relationships.category?.data?.id ?? ''),
       teams: this.findTeams(id)
     }))
   }
@@ -30,8 +37,10 @@ export default class TournamentsMapper {
   /**
    * Finds a category by id in this.included and returns its name
    */
-  private findCategory(categoryId?: string): string {
+  private findCategory(gender: string, categoryId?: string): string {
     if (!categoryId) return ''
+
+    categoryId = categoryIdTranslations[gender]?.[categoryId] ?? categoryId
 
     const data = this.included.find(entity => entity.type === 'category' && entity.id === categoryId)
     return data?.attributes.name ?? ''
@@ -39,16 +48,22 @@ export default class TournamentsMapper {
 
   private findTeams(tournamentId: string): Team[] {
     const data = this.included.filter(entity => (
-      entity.type === 'team' && 
+      entity.type === 'team' &&
       entity.relationships.registrable?.data?.type === 'tournament' &&
       entity.relationships.registrable?.data?.id === tournamentId))
+    
 
-    return data.map(({ id, attributes, relationships }): Team => ({
-      id: id,
-      name: attributes.name,
-      image: relationships.club?.data?.id ? `/${relationships.club.data.id}.jpg` : '',
-      club: this.findClub(relationships.club?.data?.id)
-    }))
+    return data.map(({ id, attributes, relationships }): Team => {
+      let clubId = relationships.club?.data?.id ?? ''
+      clubId = clubIdTranslations[clubId] ?? clubId
+
+      return {
+        id: id,
+        name: attributes.name,
+        image: clubId ? `/${clubId}.jpg` : '',
+        club: this.findClub(clubId)
+      }
+    })
   }
 
   private findClub(clubId?: string): Club | undefined {
@@ -59,7 +74,18 @@ export default class TournamentsMapper {
       id: data.id,
       name: data.attributes.name,
       image: `/${data.id}.jpg`,
+      delegation: this.findDelegation(data.relationships.delegation?.data?.id)
     } as Club : undefined
+  }
+
+  private findDelegation(delegationId?: string): Delegation | undefined {
+    if (!delegationId) return undefined;
+
+    const data = this.included.find(entity => entity.type === 'delegation' && entity.id === delegationId)
+    return data ? {
+      id: data.id,
+      name: data.attributes.name,
+    } as Delegation : undefined
   }
 
 }

@@ -1,4 +1,4 @@
-import { Link, Grid, Stack, Typography, Chip } from "@mui/material";
+import { Link, Grid, Stack, Typography, Chip, Box } from "@mui/material";
 
 import IMatch from "../../models/Match";
 import { format } from "date-fns";
@@ -8,7 +8,8 @@ import { Link as RouterLink } from "react-router-dom";
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
-export default function Match({ match, hideLink = false }: { match: IMatch, hideLink?: boolean }) {
+export interface MatchProps { tournamentId: string, groupId: string, match: IMatch, hideLink?: boolean }
+export default function Match({ tournamentId, groupId, match, hideLink = false }: MatchProps) {
   const { homeTeam, awayTeam } = match
 
   const day = match.date ? format(match.date, `EEEE, d ${[3, 7, 9].includes(match.date.getMonth()) ? `'d\'\''` : `'de '`}MMMM`, { locale: ca }) : ''
@@ -34,8 +35,12 @@ export default function Match({ match, hideLink = false }: { match: IMatch, hide
           {
             match.finished
               ? <>
-                <Typography fontSize={28} fontWeight={700}>{match.homeTeamResult} - {match.awayTeamResult}</Typography>
-                {!hideLink && <Link display={'flex'} flexDirection={'row'} underline="none" component={RouterLink} to={`/${match.tournamentId}/matches/${match.id}`}>Detalls <ChevronRightIcon /></Link>}
+                <Box>
+                  <Typography lineHeight={1} fontSize={28} fontWeight={700}>{match.homeTeamResult} - {match.awayTeamResult}</Typography>
+                  <Typography fontSize={12} sx={{ '&::first-letter': { textTransform: 'uppercase' } }}>{match.date && format(match.date, 'dd/MM/yy')}</Typography>
+                </Box>
+
+                {!hideLink && <Link display={'flex'} flexDirection={'row'} underline="none" component={RouterLink} to={`/${tournamentId}/groups/${groupId}/matches/${match.id}`}>Detalls <ChevronRightIcon /></Link>}
               </>
               : <>
                 <Typography sx={{ '&::first-letter': { textTransform: 'uppercase' } }}>{day}</Typography>

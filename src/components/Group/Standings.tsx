@@ -3,7 +3,7 @@ import { useContext, useEffect } from "react";
 import { TournamentsContext } from "../../state/Tournaments/context";
 import Loading from "../../layout/Loading";
 
-export default function Standings({ tournamentId, groupId }: { tournamentId: string, groupId: string }) {
+export default function Standings({ groupId }: { groupId: string }) {
   const { loadStandings, standingsState } = useContext(TournamentsContext)
 
   const { resources: standings, error, loading } = standingsState[groupId] ?? {}
@@ -31,7 +31,7 @@ export default function Standings({ tournamentId, groupId }: { tournamentId: str
         </TableHead>
         <TableBody>
           {
-            standings.sort((a, b) => a.position - b.position).map(row => (
+            standings.sort((a, b) => (a.position ?? 0) - (b.position ?? 0)).map(row => (
               <TableRow key={row.id}>
                 <TableCell>{row.name}</TableCell>
                 <TableCell><strong>{row.score}</strong></TableCell>

@@ -5,6 +5,7 @@ import Team from '../models/Team'
 import Round from '../models/Round'
 import Period from '../models/Period'
 import Profile from '../models/Profile'
+import { clubIdTranslations } from './ClubsMapper'
 
 export default class MatchesMapper {
 
@@ -101,10 +102,14 @@ export default class MatchesMapper {
    */
   private findTeam(teamId: string): Team | undefined {
     const data = this.included.find(entity => entity.type === 'team' && entity.id === teamId)
+
+    let clubId = data?.relationships.club?.data?.id ?? ''
+    clubId = clubIdTranslations[clubId] ?? clubId
+
     return data ? {
       id: data.id,
       name: data.attributes.name,
-      image: data.relationships.club?.data?.id ? `/${data.relationships.club.data.id}.jpg` : ''
+      image: clubId ? `/${clubId}.jpg` : ''
     } as Team : undefined
   }
 

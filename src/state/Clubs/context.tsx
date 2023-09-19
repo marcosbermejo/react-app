@@ -40,8 +40,8 @@ export default function ClubsProvider({ children }: { children: ReactNode }) {
       .reduce(tournamentsReducer, {})
 
     const sortedClubs = Object.values(clubs).sort((a, b) => {
-      const justNameA = a.name.split('.').at(-1)?.trim() ?? a.name
-      const justNameB = b.name.split('.').at(-1)?.trim() ?? b.name
+      const justNameA = a.name.toLocaleLowerCase().replaceAll(/[a-z]\./gm, '').replace("d'", '').replace("l'", '').trim()
+      const justNameB = b.name.toLocaleLowerCase().replaceAll(/[a-z]\./gm, '').replace("d'", '').replace("l'", '').trim()
 
       return justNameA.localeCompare(justNameB)
     })

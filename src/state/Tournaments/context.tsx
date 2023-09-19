@@ -1,5 +1,5 @@
 import { ReactNode, createContext } from "react";
-import { fetchGroups, fetchMatches, fetchReferees, fetchScorings, fetchStandings } from "../../services/api";
+import { GroupsFetcher, MatchesFetcher, RefereesFetcher, ScoringsFetcher, StandingsFetcher } from "../../services/api";
 import useTournaments, { TournamentsState } from "./useTournaments";
 import useResources, { ResourcesState } from "./useResources";
 import Match from "../../models/Match";
@@ -17,11 +17,12 @@ interface IContext {
   standingsState: ResourcesState<Standing>,
   loadTournaments: () => void,
   loadDates: (tournamentId: string) => void
-  loadMatches: (tournamentId: string) => void
+  loadMatches: (groupId: string, page?: number, withDate?: boolean) => void
+  loadMatch: (groupId: string, matchId: string) => void
   loadGroups: (tournamentId: string) => void
   loadStandings: (groupId: string) => void
   loadReferees: (matchId: string) => void
-  loadScorings: (tournamentId: string, matchId: string) => void  
+  loadScorings: (matchId: string, page?: number, tournamentId?: string) => void  
 }
 
 export const TournamentsContext = createContext<IContext>({
@@ -34,6 +35,7 @@ export const TournamentsContext = createContext<IContext>({
   loadTournaments: () => {},
   loadDates: () => {},
   loadMatches: () => {},
+  loadMatch: () => {},
   loadGroups: () => {},
   loadScorings: () => {},
   loadReferees: () => {},
@@ -42,11 +44,11 @@ export const TournamentsContext = createContext<IContext>({
 
 export default function TournamentsProvider({ children }: { children: ReactNode }) {
   const { tournamentsState, loadTournaments, loadDates } = useTournaments()
-  const { resourcesState: matchesState, loadResources: loadMatches } = useResources<Match>(fetchMatches)
-  const { resourcesState: groupsState, loadResources: loadGroups } = useResources<Group>(fetchGroups)
-  const { resourcesState: scoringsState, loadResources: loadScorings } = useResources<Scoring>(fetchScorings)
-  const { resourcesState: refereesState, loadResources: loadReferees } = useResources<Profile>(fetchReferees)
-  const { resourcesState: standingsState, loadResources: loadStandings } = useResources<Standing>(fetchStandings)
+  const { resourcesState: matchesState, loadResources: loadMatches, loadResource: loadMatch } = useResources<Match>(new MatchesFetcher())
+  const { resourcesState: groupsState, loadResources: loadGroups } = useResources<Group>(new GroupsFetcher())
+  const { resourcesState: scoringsState, loadResources: loadScorings } = useResources<Scoring>(new ScoringsFetcher())
+  const { resourcesState: refereesState, loadResources: loadReferees } = useResources<Profile>(new RefereesFetcher())
+  const { resourcesState: standingsState, loadResources: loadStandings } = useResources<Standing>(new StandingsFetcher())
   
   return (
     <TournamentsContext.Provider value={{
@@ -60,6 +62,7 @@ export default function TournamentsProvider({ children }: { children: ReactNode 
       loadTournaments,
       loadDates,
       loadMatches,
+      loadMatch,
       loadGroups,
       loadScorings,
       loadReferees,

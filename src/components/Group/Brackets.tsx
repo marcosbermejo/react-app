@@ -8,11 +8,14 @@ export default function Brackets({ tournamentId, groupId }: { tournamentId: stri
   const { loadMatches, loadGroups, matchesState, groupsState } = useContext(TournamentsContext)
 
   useEffect(() => {
-    loadMatches(tournamentId)
     loadGroups(tournamentId)
   }, [])
 
-  const { resources: matches, error: matchesError, loading: matchesLoading } = matchesState[tournamentId] ?? {}
+  useEffect(() => {
+    loadMatches(groupId)
+  }, [groupId])
+
+  const { resources: matches, error: matchesError, loading: matchesLoading } = matchesState[groupId] ?? {}
   const { resources: groups, error: groupsError, loading: groupsLoading } = groupsState[tournamentId] ?? {}
 
   if (matchesError || groupsError) return <Alert severity="error">{matchesError || groupsError}</Alert>

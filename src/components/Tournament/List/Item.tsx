@@ -36,7 +36,7 @@ export default function Item({ tournament }: { tournament: Tournament }) {
           <Box mb={2}>
             <Stack direction={'row'} justifyContent={'space-between'}>
               <Status tournament={tournament} />
-              <Link display={'flex'} flexDirection={'row'} underline="none" component={RouterLink} to={`/${tournament.id}`}>Detalls <ChevronRightIcon /></Link>
+              <Link display={'flex'} flexDirection={'row'} component={RouterLink} to={`/${tournament.id}`}>Detalls <ChevronRightIcon /></Link>
             </Stack>
 
             <Typography variant="h6" lineHeight={1} mt={2} mb={1} >
