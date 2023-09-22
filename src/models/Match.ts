@@ -1,10 +1,10 @@
 import Period from "./Period";
 import Round from "./Round";
 import Team from "./Team";
+import Tournament from "./Tournament";
 
 export default interface Match {
   id: string;
-  tournamentId: string;
   finished: boolean;
   postponed: boolean;
   canceled: boolean;
@@ -17,4 +17,5 @@ export default interface Match {
   round?: Round;
   periods: Period[];
   faceoffId?: string;
+  tournament: Tournament;
 }

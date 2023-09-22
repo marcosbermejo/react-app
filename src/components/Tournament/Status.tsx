@@ -1,5 +1,5 @@
 import { Chip } from "@mui/material"
-import Tournament from "../../../models/Tournament"
+import Tournament from "../../models/Tournament"
 
 export default function TournamentStatus ({ tournament }: { tournament: Tournament }) {
   const statuses: Record<string, { label: string, color: 'default' | 'success' | 'warning' | 'error' }> = {

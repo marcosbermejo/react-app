@@ -30,7 +30,7 @@ export default function Detail({ tournamentId, groupId, match }: { tournamentId:
         </Box>
 
         <Box px={1}>
-          <Match tournamentId={tournamentId} groupId={groupId} match={match} hideLink={true} />
+          <Match match={match} hideLink={true} />
         </Box>
 
         <Stack px={2}>

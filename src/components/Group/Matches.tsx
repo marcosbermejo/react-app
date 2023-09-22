@@ -21,7 +21,7 @@ export default function Matches({ tournamentId, groupId }: { tournamentId: strin
     {
       matches.length === 0
         ? <Alert severity="warning">No hi ha partits definits per a aquest Grup</Alert>
-        : <Stack spacing={2} flexGrow={1}>{matches.map((match) => <Paper key={match.id}><Match tournamentId={tournamentId} groupId={groupId} match={match} /></Paper>)}</Stack>
+        : <Stack spacing={2} flexGrow={1}>{matches.map((match) => <Paper key={match.id}><Match match={match} /></Paper>)}</Stack>
     }
     {
       hasNext && (

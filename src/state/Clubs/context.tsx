@@ -1,60 +1,36 @@
-import { ReactNode, createContext, useContext, useEffect, useState } from "react";
-import Club from "../../models/Club";
-import Tournament from "../../models/Tournament";
-import Team from "../../models/Team";
-import { TournamentsContext } from "../Tournaments/context";
+import { ReactNode, createContext } from "react";
+import useClubs, { ClubsState } from "./useClubs";
+import useResources, { ResourcesState } from "../Tournaments/useResources";
+import Match from "../../models/Match";
+import { ClubMatchesFetcher } from "../../services/api";
 
 interface IContext {
-  clubs: Club[],
-  loading: boolean,
-  loaded: boolean,
-  error: string,  
+  clubsState: ClubsState,
+  matchesState: ResourcesState<Match>,
   loadClubs: () => void,
+  loadClub: (clubId: string) => void,
+  loadMatches: (clubId: string, page?: number, date?: Date) => void
 }
 
 export const ClubsContext = createContext<IContext>({
-  clubs: [],
-  loading: false,
-  loaded: false,
-  error: '',   
+  clubsState: { clubStates: [], loaded: false, loading: false, error: '' },
+  matchesState: {},
   loadClubs: () => {},
+  loadClub: () => {},
+  loadMatches: () => {}
 });
 
-const teamsReducer = (clubs: Record<string, Club>, team: Team): Record<string, Club> => {
-  if (!team.club) return clubs
-  return { ...clubs, [team.club.id]: team.club }
-}
-
-const tournamentsReducer = (clubs: Record<string, Club>, tournament: Tournament): Record<string, Club> => ({
-  ...clubs,
-  ...tournament.teams.reduce(teamsReducer, {})
-})
-
 export default function ClubsProvider({ children }: { children: ReactNode }) {
-  const { loadTournaments, tournamentsState: { tournamentStates, error, loading, loaded } } = useContext(TournamentsContext)
-  const [clubs, setClubs] = useState<Club[]>([])
-
-  useEffect(() => {
-    const clubs = tournamentStates
-      .map(({tournament}) => tournament)
-      .reduce(tournamentsReducer, {})
-
-    const sortedClubs = Object.values(clubs).sort((a, b) => {
-      const justNameA = a.name.toLocaleLowerCase().replaceAll(/[a-z]\./gm, '').replace("d'", '').replace("l'", '').trim()
-      const justNameB = b.name.toLocaleLowerCase().replaceAll(/[a-z]\./gm, '').replace("d'", '').replace("l'", '').trim()
-
-      return justNameA.localeCompare(justNameB)
-    })
-    setClubs(sortedClubs)
-  }, [tournamentStates])
+  const { clubsState, loadClubs, loadClub } = useClubs()
+  const { resourcesState: matchesState, loadResources: loadMatches } = useResources<Match>(new ClubMatchesFetcher())
 
   return (
     <ClubsContext.Provider value={{
-      clubs,
-      loading,
-      loaded,
-      error,
-      loadClubs: loadTournaments
+      clubsState,
+      matchesState,
+      loadClubs,
+      loadClub,
+      loadMatches
     }}>
       {children}
     </ClubsContext.Provider>

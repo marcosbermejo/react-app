@@ -1,9 +1,9 @@
 import { useContext, useEffect, useState } from "react"
-import { TournamentsContext } from "../../../state/Tournaments/context"
+import { TournamentsContext } from "../../state/Tournaments/context"
 import { Alert } from "@mui/material"
-import Loading from "../../../layout/Loading"
-import GroupDetail from "../../Group/Detail"
-import Filter from "../../Group/Filter"
+import Loading from "../../layout/Loading"
+import GroupDetail from "../Group/Detail"
+import Filter from "../Group/Filter"
 
 export default function Detail({ tournamentId }: { tournamentId: string }) {
   const [selectedGroupId, setSelectedGroupId] = useState('');

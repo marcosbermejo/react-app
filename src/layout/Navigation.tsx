@@ -11,8 +11,9 @@ export default function Navigation() {
   const [value, setValue] = useState('');
 
   useEffect(() => {
-    const isTournamentsPath = (path: string) => !['/clubs', '/news'].includes(path)
-    setValue(isTournamentsPath(location.pathname) ? '/' : location.pathname);
+    const { pathname } = location
+    const value = pathname.includes('clubs') ? '/clubs' : (pathname.includes('news') ? '/news' : '/')
+    setValue(value);
   }, [location])
   
   return (

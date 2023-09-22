@@ -60,7 +60,7 @@ export default class TournamentsMapper {
       return {
         id: id,
         name: attributes.name,
-        image: clubId ? `/${clubId}.jpg` : '',
+        image: clubId ? `${process.env.REACT_APP_CDN_URL}/logos/${clubId}.jpg` : '',
         club: this.findClub(clubId)
       }
     })
@@ -73,7 +73,7 @@ export default class TournamentsMapper {
     return data ? {
       id: data.id,
       name: data.attributes.name,
-      image: `/${data.id}.jpg`,
+      image: `${process.env.REACT_APP_CDN_URL}/logos/${data.id}.jpg`,
       delegation: this.findDelegation(data.relationships.delegation?.data?.id)
     } as Club : undefined
   }

@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom"
 
 import { HeaderContext } from "../state/Header/context"
 import { TournamentsContext } from "../state/Tournaments/context"
-import Detail from "../components/Tournament/Detail/Detail"
+import Detail from "../components/Tournament/Detail"
 import { Alert } from "@mui/material"
 import Loading from "../layout/Loading"
 

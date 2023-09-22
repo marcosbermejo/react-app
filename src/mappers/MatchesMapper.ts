@@ -7,6 +7,11 @@ import Period from '../models/Period'
 import Profile from '../models/Profile'
 import { clubIdTranslations } from './ClubsMapper'
 
+const categoryIdTranslations: Record<string, Record<string, string>> = {
+  female: {'2090': '4815'},
+  male: {'2090': '4814'},
+}
+
 export default class MatchesMapper {
 
   private readonly data: ApiResponseData[]
@@ -23,7 +28,6 @@ export default class MatchesMapper {
   public mapMatches(): Match[] {
     return this.data.map(({ id, attributes, meta, relationships }): Match => ({
       id,
-      tournamentId: relationships.tournament?.data?.id ?? '',
       canceled: attributes.canceled, 
       postponed: attributes.postponed, 
       finished: attributes.finished,
@@ -35,8 +39,39 @@ export default class MatchesMapper {
       homeTeamResult: this.findMatchResult(id, meta.home_team),
       awayTeamResult: this.findMatchResult(id, meta.away_team),
       periods: relationships.periods?.data ? this.findPeriods(relationships.periods.data, id, meta.home_team, meta.away_team) : [],
-      faceoffId: relationships.faceoff?.data?.id
+      faceoffId: relationships.faceoff?.data?.id,
+      tournament: this.findTournament(relationships.round?.data?.id) ?? {id: '', name:'', order: 0, status: '', category: '', teams: []},
     }))
+  }
+
+  public findTournament(roundId?: string) {
+    if (!roundId) return undefined
+    
+    const round = this.included.find(entity => entity.type === 'round' && entity.id === roundId)
+    if (!round || !round.relationships.group?.data?.id) return undefined
+
+    const group = this.included.find(entity => entity.type === 'group' && entity.id === round.relationships.group?.data?.id)
+    if (!group || !group.relationships.tournament?.data?.id) return undefined
+
+    const data = this.included.find(entity => entity.type === 'tournament' && entity.id === group.relationships.tournament?.data?.id)
+
+    return data ? {
+      id: data.id,
+      status: data.attributes.status,
+      order: data.attributes.order,
+      name: data.attributes.name,
+      category: this.findCategory(data.attributes.gender, data.relationships.category?.data?.id ?? ''),
+      teams: []
+    } : undefined
+  }
+
+  private findCategory(gender: string, categoryId?: string): string {
+    if (!categoryId) return ''
+
+    categoryId = categoryIdTranslations[gender]?.[categoryId] ?? categoryId
+
+    const data = this.included.find(entity => entity.type === 'category' && entity.id === categoryId)
+    return data?.attributes.name ?? ''
   }
 
   /**
@@ -109,7 +144,7 @@ export default class MatchesMapper {
     return data ? {
       id: data.id,
       name: data.attributes.name,
-      image: clubId ? `/${clubId}.jpg` : ''
+      image: clubId ? `${process.env.REACT_APP_CDN_URL}/logos/${clubId}.jpg` : '',
     } as Team : undefined
   }
 

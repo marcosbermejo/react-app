@@ -4,6 +4,7 @@ import Faceoff from '../models/Faceoff'
 import Round from '../models/Round'
 import { parse } from 'date-fns'
 import Team from '../models/Team'
+import { clubIdTranslations } from './ClubsMapper'
 
 export default class GroupsMapper {
 
@@ -69,10 +70,14 @@ export default class GroupsMapper {
    */
   private findTeam(teamId: string): Team | undefined {
     const data = this.included.find(entity => entity.type === 'team' && entity.id === teamId)
+
+    let clubId = data?.relationships.club?.data?.id ?? ''
+    clubId = clubIdTranslations[clubId] ?? clubId
+
     return data ? {
       id: data.id,
       name: data.attributes.name,
-      image: data.relationships.club?.data?.id ? `/${data.relationships.club.data.id}.jpg` : ''
+      image: data.relationships.club?.data?.id ? `${process.env.REACT_APP_CDN_URL}/logos/${clubId}.jpg` : ''
     } as Team : undefined
   }
 

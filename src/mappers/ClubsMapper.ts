@@ -20,7 +20,7 @@ export const clubIdTranslations: Record<string, string> = {
   '4977252': '4979849',
   '4977516': '4979925',
   '4978706': '4980016',
-  '4978719': '4980021',
+  '4978719': '4980021'
 }
 
 export default class ClubsMapper {
@@ -37,7 +37,7 @@ export default class ClubsMapper {
   public mapClub(clubId: string): Club {
     const club: Club = {
       id: clubId,
-      image: '',
+      image: `${process.env.REACT_APP_CDN_URL}/logos/${clubId}.jpg`,
       name: this.data.find(row => row.label === 'Nom')?.value ?? '',
       phone: this.data.find(row => row.label === 'Telèfon')?.value,
       email: this.data.find(row => row.label === 'Email')?.value,

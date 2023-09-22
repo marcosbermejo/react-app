@@ -1,15 +1,17 @@
 import { useContext, useEffect, useState } from "react";
-import { Alert, Box, Grid, Paper, Stack, Typography } from "@mui/material";
+import { Alert, Box, Grid, Link, Paper, Stack, Typography } from "@mui/material";
 import Loading from "../../layout/Loading";
 import { ClubsContext } from "../../state/Clubs/context";
 import Filter from "./Filter";
+import { Link as RouterLink } from "react-router-dom";
 
 export default function List() {
-  const { clubs, error, loading, loaded, loadClubs } = useContext(ClubsContext)
+  const exclude = ['9152167', '4979977', '4979984', '4979829']
+  const { clubsState: { clubStates, error, loading, loaded }, loadClubs } = useContext(ClubsContext)
   const [selectedDelegation, setSelectedDelegation] = useState(localStorage.getItem('tournaments.selectedDelegation') || '');
 
   const delegations = Array
-    .from(new Set(clubs.map((club) => club.delegation?.name.split('|')[0] ?? '')))
+    .from(new Set(clubStates.filter(({club}) => !exclude.includes(club.id)).map(({ club }) => club.delegation?.name.split('|')[0] ?? '')))
     .sort((a, b) => a.localeCompare(b))
 
   useEffect(() => {
@@ -26,8 +28,10 @@ export default function List() {
   if (!loaded) return <></>
 
   const selectedClubs = selectedDelegation
-    ? clubs.filter(({ delegation }) => delegation?.name.includes(selectedDelegation))
-    : clubs
+    ? clubStates.filter(({ club }) => club.delegation?.name.includes(selectedDelegation))
+    : clubStates
+
+  const filteredClubs = selectedClubs.filter(({club}) => !exclude.includes(club.id))
 
   return <>
     <Box sx={{ px: 2, pt: 2 }}>
@@ -39,21 +43,23 @@ export default function List() {
     </Box>
     <Grid container>
       {
-        selectedClubs.map(club =>
+        filteredClubs.map(({ club }) =>
           <Grid key={club.id} item xs={6} sm={4} p={2}>
-            <Stack alignItems="center" useFlexGap={true} spacing={1}>
-              <Paper elevation={3}>
-                <img src={club.image} alt={club.name} style={{ width: '300px', maxWidth: '100%', display: 'block' }} loading="lazy" />
-              </Paper>
-              <Stack minHeight={'2em'} justifyContent={'center'}>
-                <Typography fontSize={20} variant="subtitle2" fontWeight={'bold'} textAlign="center">
-                  {club.name}
-                </Typography>
-                <Typography variant="body1" textAlign="center">
-                  {club.delegation?.name.split('|')[1]}
-                </Typography>
+            <Link underline={'none'} color="inherit" component={RouterLink} to={`/clubs/${club.id}`}>
+              <Stack alignItems="center" useFlexGap={true} spacing={1}>
+                <Paper elevation={3}>
+                  <img src={club.image} alt={club.name} style={{ width: '300px', maxWidth: '100%', display: 'block' }} loading="lazy" />
+                </Paper>
+                <Stack minHeight={'2em'} justifyContent={'center'}>
+                  <Typography fontSize={20} variant="subtitle2" fontWeight={'bold'} textAlign="center">
+                    {club.name}
+                  </Typography>
+                  <Typography variant="body1" textAlign="center">
+                    {club.delegation?.name.split('|')[1]}
+                  </Typography>
+                </Stack>
               </Stack>
-            </Stack>
+            </Link>
           </Grid>
         )
       }

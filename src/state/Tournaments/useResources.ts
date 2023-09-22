@@ -25,10 +25,10 @@ function reducer<T extends Id>(state: ResourcesState<T>, action: Action<T>): Res
   switch (action.type) {
 
     case 'SET_RESOURCES_LOADING':
-      return { ...state, [action.id]: { ...state[action.id], loaded: false, loading: true, error: '' } }
+      return { ...state, [action.id]: { ...state[action.id], resources: state[action.id]?.resources ?? [], loaded: false, loading: true, error: '' } }
 
     case 'SET_RESOURCES_ERROR':
-      return { ...state, [action.id]: { ...state[action.id], loaded: false, loading: false, error: action.error } }
+      return { ...state, [action.id]: { ...state[action.id], resources: state[action.id]?.resources ?? [], loaded: false, loading: false, error: action.error } }
 
     case 'SET_RESOURCES':
       return {
@@ -45,6 +45,9 @@ function reducer<T extends Id>(state: ResourcesState<T>, action: Action<T>): Res
       }
 
     case 'SET_RESOURCE':
+
+      console.log(action)
+
       return {
         ...state,
         [action.id]: {
@@ -67,7 +70,7 @@ export default function useResources<T extends Id>(fetcher: Fetcher<T>) {
 
   const loadResources = async (id: string, page: number = 1, ...args: any[]) => {
     const resourcesState = state[id]
-    if (resourcesState && (resourcesState.loadedPages.includes(page) || resourcesState.loading)) return;
+    if (resourcesState && (resourcesState.loadedPages?.includes(page) || resourcesState.loading)) return;
 
     try {
       if (page === 1) dispatch({ type: 'SET_RESOURCES_LOADING', id });

@@ -6,6 +6,7 @@ import Tournament from '../pages/Tournament';
 import Clubs from '../pages/Clubs';
 import News from '../pages/News';
 import Match from '../pages/Match';
+import Club from '../pages/Club';
 
 const Router = createBrowserRouter([
   {
@@ -14,6 +15,7 @@ const Router = createBrowserRouter([
     children: [
       { path: '/', element: <Tournaments />},
       { path: '/clubs', element: <Clubs /> },
+      { path: '/clubs/:clubId', element: <Club /> },
       { path: '/news', element: <News /> },
       { path: '/:tournamentId', element: <Tournament /> },
       { path: '/:tournamentId/groups/:groupId/matches/:matchId', element: <Match /> }
