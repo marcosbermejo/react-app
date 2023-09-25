@@ -45,14 +45,14 @@ function reducer<T extends Id>(state: ResourcesState<T>, action: Action<T>): Res
       }
 
     case 'SET_RESOURCE':
-
-      console.log(action)
-
       return {
         ...state,
         [action.id]: {
           ...state[action.id],
-          resources: state[action.id].resources.map(r => r.id === action.resource?.id ? action.resource : r),
+          resources: 
+            state[action.id].resources.find(r => r.id === action.resource?.id)
+              ? state[action.id].resources.map(r => r.id === action.resource?.id ? action.resource : r) 
+              : (action.resource ? [action.resource] : []),
           loaded: true,
           loading: false,
           error: ''

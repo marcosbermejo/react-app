@@ -78,11 +78,11 @@ export default class MatchesMapper {
    * Maps from API response to Referees list
    */
   public mapMatchReferees(): Profile[] {
-    return this.included.filter( entity => entity.type === 'profile').map(({id, attributes, links}):Profile => ({
+    return this.included ? this.included.filter( entity => entity.type === 'profile').map(({id, attributes, links}):Profile => ({
       id,
       name: (attributes.first_name + ' ' + attributes.last_name).toLowerCase(),
       image: links?.images?.image?.large ?? ''
-    }))
+    })) : []
   }
 
   /**
