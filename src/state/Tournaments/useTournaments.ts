@@ -1,6 +1,6 @@
 import { useReducer } from "react"
 import Tournament from "../../models/Tournament"
-import { TournamentsFetcher } from "../../services/api"
+import axios from "axios";
 
 export interface TournamentsState {
   tournamentStates: TournamentState[]
@@ -84,14 +84,14 @@ function reducer(state: TournamentsState, action: Action): TournamentsState {
 export default function useTournaments() {
   const [state, dispatch] = useReducer(reducer, { tournamentStates: [], loaded: false, loading: false, error: '' });
   const { tournamentStates, loaded, loading } = state
-  const fetcher = new TournamentsFetcher()
 
   const loadTournaments = async () => {
     if (loaded || loading) return;
 
     try {
       dispatch({ type: 'SET_TOURNAMENTS_LOADING' });
-      dispatch({ type: 'SET_TOURNAMENTS', tournaments: await fetcher.fetchAll() });
+      const { data: tournaments } = await axios.get<Tournament[]>(process.env.REACT_APP_NEW_API_URL + '/tournaments')
+      dispatch({ type: 'SET_TOURNAMENTS', tournaments });
 
     } catch (err: any) {
       console.log(err)
@@ -107,9 +107,12 @@ export default function useTournaments() {
 
     try {
       dispatch({ type: 'SET_TOURNAMENT_LOADING', tournamentId });
-      const firstMatch = (await fetcher.fetchFirstMatch(tournamentId))[0]
-      const lastMatch = (await fetcher.fetchLastMatch(tournamentId))[0]
-      dispatch({ type: 'SET_TOURNAMENT_DATES', tournamentId, start: firstMatch?.date, end: lastMatch?.date });
+      
+      const { data: dates } = await axios.get<[number, number]>(process.env.REACT_APP_NEW_API_URL + '/tournaments/' + tournamentId)
+      const start = dates[0] > 0 ? new Date(dates[0]) : undefined
+      const end = dates[1] > 0 ? new Date(dates[1]) : undefined
+
+      dispatch({ type: 'SET_TOURNAMENT_DATES', tournamentId, start, end });
 
     } catch (err: any) {
       console.log(err)

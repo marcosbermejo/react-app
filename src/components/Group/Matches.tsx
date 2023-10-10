@@ -7,7 +7,7 @@ import Match from "../Match/Match";
 export default function Matches({ tournamentId, groupId }: { tournamentId: string, groupId: string }) {
   const [page, setPage] = useState(1)
   const { loadMatches, matchesState } = useContext(TournamentsContext)
-  const { resources: matches, error, loading, hasNext, loadedPages } = matchesState[groupId] ?? {}
+  const { matches, error, loading, hasNext, loadedPages } = matchesState[groupId] ?? {}
 
   useEffect(() => {
     loadMatches(groupId, page, true)

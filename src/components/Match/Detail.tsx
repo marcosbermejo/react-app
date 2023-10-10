@@ -7,7 +7,6 @@ import IMatch from '../../models/Match'
 import Scoring from "./Scoring"
 import { format } from "date-fns"
 import { ca } from "date-fns/locale"
-import Referees from "./Referees"
 
 export default function Detail({ tournamentId, groupId, match }: { tournamentId: string, groupId: string, match: IMatch }) {
   
@@ -43,7 +42,7 @@ export default function Detail({ tournamentId, groupId, match }: { tournamentId:
         <Stack px={2}>
           <Paper sx={{ pb: 2, textAlign: 'center' }}>
             <Typography py={2} fontSize={18} textAlign={'center'} fontWeight={'bold'}>Àrbitres</Typography>
-            <Referees matchId={match.id} />
+            {match.referees.map(referee => <Typography key={referee.id} py={1} textTransform={'capitalize'}>{referee.name.toLowerCase()}</Typography>)}
           </Paper>
         </Stack>
 

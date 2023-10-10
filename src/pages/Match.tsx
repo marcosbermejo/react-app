@@ -20,7 +20,7 @@ export default function Match () {
 
   if (!tournamentId || !matchId || !groupId) return <></>
 
-  const { resources: matches, error, loading } = matchesState[groupId] ?? {}
+  const { matches, error, loading } = matchesState[groupId] ?? {}
 
   if (error) return <Alert severity="error">{error}</Alert>
   if (loading) return <Loading />

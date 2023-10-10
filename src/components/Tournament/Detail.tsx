@@ -9,7 +9,7 @@ export default function Detail({ tournamentId }: { tournamentId: string }) {
   const [selectedGroupId, setSelectedGroupId] = useState('');
   const { loadGroups, groupsState } = useContext(TournamentsContext)
 
-  const { resources: groups, error, loading } = groupsState[tournamentId] ?? {}
+  const { groups, error, loading } = groupsState[tournamentId] ?? {}
 
   useEffect(() => {
     loadGroups(tournamentId)

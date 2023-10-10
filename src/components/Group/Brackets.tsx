@@ -15,8 +15,8 @@ export default function Brackets({ tournamentId, groupId }: { tournamentId: stri
     loadMatches(groupId)
   }, [groupId])
 
-  const { resources: matches, error: matchesError, loading: matchesLoading } = matchesState[groupId] ?? {}
-  const { resources: groups, error: groupsError, loading: groupsLoading } = groupsState[tournamentId] ?? {}
+  const { matches, error: matchesError, loading: matchesLoading } = matchesState[groupId] ?? {}
+  const { groups, error: groupsError, loading: groupsLoading } = groupsState[tournamentId] ?? {}
 
   if (matchesError || groupsError) return <Alert severity="error">{matchesError || groupsError}</Alert>
   if (matchesLoading || groupsLoading) return <Loading />

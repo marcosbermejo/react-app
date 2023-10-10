@@ -1,4 +1,5 @@
 import Period from "./Period";
+import Profile from "./Profile";
 import Round from "./Round";
 import Team from "./Team";
 import Tournament from "./Tournament";
@@ -16,6 +17,7 @@ export default interface Match {
   awayTeamResult?: number;
   round?: Round;
   periods: Period[];
+  referees: Profile[];
   faceoffId?: string;
   tournament: Tournament;
 }

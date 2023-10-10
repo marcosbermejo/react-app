@@ -1,5 +1,4 @@
 import { useContext, useEffect, useReducer } from "react"
-import { ClubsFetcher } from "../../services/api"
 import Club from "../../models/Club";
 import { TournamentsContext } from "../Tournaments/context";
 import Team from "../../models/Team";
@@ -104,7 +103,6 @@ const clean = (name: string) => name
 export default function useClubs() {
   const { loadTournaments, tournamentsState } = useContext(TournamentsContext)
   const [clubsState, dispatch] = useReducer(reducer, { clubStates: [], loaded: false, loading: false, error: '' });
-  const fetcher = new ClubsFetcher()
 
   useEffect(() => {
     const clubs = tournamentsState.tournamentStates
@@ -144,7 +142,7 @@ export default function useClubs() {
 
     try {
       dispatch({ type: 'SET_CLUB_LOADING', clubId });
-      dispatch({ type: 'SET_CLUB', clubId, club: await fetcher.fetchClub(clubId) });
+      dispatch({ type: 'SET_CLUB', clubId, club: {id: '', name: '', image: ''} });
 
     } catch (err: any) {
       console.log(err)
